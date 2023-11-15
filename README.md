@@ -1,1 +1,1 @@
-# Ecommerce-App
+# Ecommerce App with Typescript, PostgreSQL and Express
