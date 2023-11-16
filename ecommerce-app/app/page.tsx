@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Products from './components/products'
+import Products from './add-products/page'
 import Navbar from './components/navbar'
 
 export default function Home() {
@@ -17,10 +17,9 @@ export default function Home() {
           alt="Cover photo" 
           />
       </div>
-
-      <div>
+      {/* <div>
         <Products/>
-      </div>
+      </div> */}
     </div>
     
     
