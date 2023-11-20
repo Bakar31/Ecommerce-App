@@ -1,10 +1,8 @@
 import Image from 'next/image'
-import Products from './add-products/page'
 import Navbar from './components/navbar'
 
 export default function Home() {
   return (
-    // <h1 className='text-center text-lg'>Hello from SazimStore!</h1>
     <div>
       <div>
         <Navbar/>
@@ -17,9 +15,6 @@ export default function Home() {
           alt="Cover photo" 
           />
       </div>
-      {/* <div>
-        <Products/>
-      </div> */}
     </div>
     
     
