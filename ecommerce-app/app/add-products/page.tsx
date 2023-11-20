@@ -1,7 +1,9 @@
 "use client";
 
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { useState, FormEvent, ChangeEvent } from "react";
+import FormSubmitButton from "../components/formSubmitButton";
 
 // export const metadata: Metadata = {
 //   title: "Add Product - SazimStore",
@@ -50,6 +52,7 @@ const addProducts = () => {
     } catch{
       console.error('Error adding product');
     }
+    // redirect('/');
   };
 
   return (
@@ -103,9 +106,9 @@ const addProducts = () => {
           />
         </div>
         <div className="mb-3">
-          <button type="submit" className="btn btn-info w-full max-w-xl">
-            Add Product
-          </button>
+          <FormSubmitButton>
+            Add New Product
+          </FormSubmitButton>
         </div>
       </form>
     </div>

@@ -7,6 +7,9 @@ const Navbar = () => {
                 <Link className="btn btn-ghost text-lg" href="/" prefetch={false}>
                     Home
                 </Link>
+                <Link className="btn btn-ghost text-lg" href="/add-products" prefetch={false}>
+                    New Product
+                </Link>
             </div>
             <div className="flex-none gap-2">
                 <div className="form-control">
