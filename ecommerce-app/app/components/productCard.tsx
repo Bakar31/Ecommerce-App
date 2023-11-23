@@ -5,7 +5,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stock_quantity: number;
+  stockquantity: number;
   product_id: number;
 }
 
@@ -17,7 +17,7 @@ const ProductCard: React.FC<Product> = ({
   name,
   description,
   price,
-  stock_quantity,
+  stockquantity,
   product_id
 }) => {
   return (
@@ -27,7 +27,7 @@ const ProductCard: React.FC<Product> = ({
         <h2 className="card-title">{name}</h2>
         <p>{description}</p>
         <p>Price: ${price}</p>
-        <p>Stock: {stock_quantity}</p>
+        <p>Stock: {stockquantity}</p>
         <div className="card-actions justify-end">
           <button className="btn btn-primary">Buy Now</button>
         </div>
@@ -45,7 +45,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
           name={product.name}
           description={product.description}
           price={product.price}
-          stock_quantity={product.stock_quantity}
+          stockquantity={product.stockquantity}
           product_id = {product.product_id}
         />
       ))}
