@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Products from './products/page'
 
 export default function Home() {
   return (
@@ -10,6 +11,9 @@ export default function Home() {
           height={500}
           alt="Cover photo" 
           />
+      </div>
+      <div>
+        <Products/>
       </div>
     </div>
     

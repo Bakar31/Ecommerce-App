@@ -24,7 +24,7 @@ export const createProduct = async (req:Request, res:Response) => {
 
   try {
     const query =
-      "INSERT INTO products (name, description, price, stock_quantity) VALUES ($1, $2, $3, $4) RETURNING *";
+      "INSERT INTO products (name, description, price, stockQuantity) VALUES ($1, $2, $3, $4) RETURNING *";
     const values = [name, description, price, stockQuantity];
     const result = await client.query(query, values);
 
