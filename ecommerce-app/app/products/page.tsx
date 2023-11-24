@@ -33,7 +33,7 @@ const Products = () => {
   return (
     <div>
       <div className="space-y-8">
-        <h1 className="text-3xl text-left">Products</h1>
+        <h1 className="text-2xl font-bold text">Product List</h1>
       </div>
       <ProductList products={products} />
     </div>

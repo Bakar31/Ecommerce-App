@@ -54,13 +54,16 @@ const EditProduct = ({
           price: 0,
           stockQuantity: 0,
         });
+
+        setTimeout(() => {
+          window.location.href = "/products";
+        }, 2000);
       } else {
         console.error("Error updating product:", response.statusText);
       }
     } catch (error) {
       console.error("Error updating product:", error);
     }
-    // Redirect logic can be added here
     // redirect('/');
   };
 
@@ -115,7 +118,7 @@ const EditProduct = ({
           />
         </div>
         <div className="mb-3">
-          <FormSubmitButton>Update</FormSubmitButton>
+          <FormSubmitButton>Update Product</FormSubmitButton>
         </div>
       </form>
     </div>

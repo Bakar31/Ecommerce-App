@@ -43,6 +43,10 @@ const addProducts = () => {
           price: "",
           stockQuantity: "",
         });
+
+        setTimeout(() => {
+          window.location.href = "/products";
+        }, 2000);
       } else {
         console.error("Error adding product:", response.statusText);
       }
@@ -103,7 +107,7 @@ const addProducts = () => {
           />
         </div>
         <div className="mb-3">
-          <FormSubmitButton>Add</FormSubmitButton>
+          <FormSubmitButton>Add Product</FormSubmitButton>
         </div>
       </form>
     </div>

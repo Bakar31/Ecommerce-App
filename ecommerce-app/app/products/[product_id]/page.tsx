@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import Notification from "@/app/components/notification";
 
 interface Product {
   product_id: number;
@@ -21,6 +22,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
   params: { product_id },
 }) => {
   const [product, setProduct] = useState<Product | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -37,7 +39,6 @@ const ProductPage: React.FC<ProductPageProps> = ({
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data)
           setProduct(data);
         } else {
           console.error("Failed to fetch data");
@@ -51,21 +52,32 @@ const ProductPage: React.FC<ProductPageProps> = ({
   }, [product_id]);
 
   const handleDelete = async () => {
-    const response = await fetch(
-      `http://localhost:8000/api/products/${product_id}`,
-      { method: "DELETE" }
-    );
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/products/${product_id}`,
+        { method: "DELETE" }
+      );
 
-    if (response.ok){
-      console.log('Product deleted');
-    } else {
-      console.error('Failed to delete product');
+      if (response.ok) {
+        setNotification("Product Deleted");
+        setTimeout(() => {
+          setNotification(null);
+          window.location.href = '/products';
+        }, 2000);
+      } else {
+        console.error('Failed to delete product');
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
     }
   };
 
   
   return (
     <div className="container mx-auto p-4">
+      {notification && (
+        <Notification message="Product Deleted" onClose={() => setNotification(null)} />
+      )}
       {product && (
         <div className="p-4">
           <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>

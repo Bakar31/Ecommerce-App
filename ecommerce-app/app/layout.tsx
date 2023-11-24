@@ -22,7 +22,7 @@ export default function RootLayout({
       <div>
         <Navbar/>
       </div>
-        <main className="p-4 max-w-8xl m-auto min-w-[300px]">{children}</main>
+        <main className="p-4 m-auto">{children}</main>
       </body>
     </html>
   );
