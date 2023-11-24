@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent, ChangeEvent } from "react";
+import { redirect } from "next/navigation";
 import FormSubmitButton from "../components/formSubmitButton";
 
 const addProducts = () => {
@@ -12,7 +13,9 @@ const addProducts = () => {
     stockQuantity: "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -35,16 +38,16 @@ const addProducts = () => {
       if (response.ok) {
         console.log("New Product added");
         setFormData({
-          name: '',
-          description: '',
-          price: '',
-          stockQuantity: '',
+          name: "",
+          description: "",
+          price: "",
+          stockQuantity: "",
         });
-      } else{
-        console.error('Error adding product:', response.statusText);
+      } else {
+        console.error("Error adding product:", response.statusText);
       }
-    } catch{
-      console.error('Error adding product');
+    } catch {
+      console.error("Error adding product");
     }
     // redirect('/');
   };
@@ -100,9 +103,7 @@ const addProducts = () => {
           />
         </div>
         <div className="mb-3">
-          <FormSubmitButton>
-            Add
-          </FormSubmitButton>
+          <FormSubmitButton>Add</FormSubmitButton>
         </div>
       </form>
     </div>
