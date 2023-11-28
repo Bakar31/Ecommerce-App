@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, FormEvent, ChangeEvent } from "react";
-import FormSubmitButton from "../components/formSubmitButton";
 
 const EditProduct = ({
   searchParams,
@@ -20,6 +19,7 @@ const EditProduct = ({
     price: parseFloat(searchParams.price),
     stockQuantity: parseInt(searchParams.stockQuantity),
   });
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -33,7 +33,13 @@ const EditProduct = ({
 
   const handleEditProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (buttonDisabled) {
+      return;
+    }
+    
+    setButtonDisabled(true);
     console.log(formData);
+  
     try {
       const response = await fetch(
         `http://localhost:8000/api/products/${searchParams.product_id}`,
@@ -56,15 +62,16 @@ const EditProduct = ({
         });
 
         setTimeout(() => {
-          window.location.href = "/products";
+          window.location.href = "/products"; // avoid TO DO
         }, 2000);
       } else {
         console.error("Error updating product:", response.statusText);
       }
     } catch (error) {
       console.error("Error updating product:", error);
+    }finally {
+      setButtonDisabled(false);
     }
-    // redirect('/');
   };
 
   return (
@@ -118,7 +125,13 @@ const EditProduct = ({
           />
         </div>
         <div className="mb-3">
-          <FormSubmitButton>Update Product</FormSubmitButton>
+          <button
+            className="btn btn-info w-full max-w-xl"
+            type="submit"
+            disabled={buttonDisabled}
+          >
+            {buttonDisabled ? "Updating Product..." : "Update Product"}
+          </button>
         </div>
       </form>
     </div>

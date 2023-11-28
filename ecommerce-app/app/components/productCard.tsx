@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -7,6 +8,7 @@ interface Product {
   price: number;
   stockquantity: number;
   product_id: number;
+  image_path: string;
 }
 
 interface ProductListProps {
@@ -18,18 +20,38 @@ const ProductCard: React.FC<Product> = ({
   description,
   price,
   stockquantity,
-  product_id
+  product_id,
+  image_path,
 }) => {
   return (
+    <Link href={`/products/${product_id}`}>
+      <div className="card w-96 bg-base-110 shadow-xl hover: transition">
 
-    <Link className="card w-80 bg-base-90 shadow-xl" href={`/products/${product_id}`}>
-      <div className="card-body">
-        <h2 className="card-title">{name}</h2>
-        <p>{description}</p>
-        <p>Price: ${price}</p>
-        <p>Stock: {stockquantity}</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-success">Buy Now</button>
+        {image_path && image_path.trim() !== '' ? (
+        <Image
+          src={image_path}
+          width={800}
+          height={400}
+          alt={name}
+          className="h-48 object-cover"
+        />
+      ) : (
+        <Image
+          src='/products/default.jpg'
+          width={800}
+          height={400}
+          alt="Default"
+          className="h-48 object-cover"
+        />
+      )}
+
+        <div className="card-body">
+          <h2 className="card-title">{name}</h2>
+          <p>{description.slice(0, 50)}</p>
+          <p>Price: {price}$</p>
+          <div className="card-actions justify-end">
+            <button className="btn btn-success">Buy Now</button>
+          </div>
         </div>
       </div>
     </Link>
@@ -46,7 +68,8 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
           description={product.description}
           price={product.price}
           stockquantity={product.stockquantity}
-          product_id = {product.product_id}
+          product_id={product.product_id}
+          image_path={product.image_path}
         />
       ))}
     </div>

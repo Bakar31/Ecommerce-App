@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Notification from "@/app/components/notification";
+import Image from "next/image";
 
 interface Product {
   product_id: number;
@@ -10,6 +11,7 @@ interface Product {
   description: string;
   price: number;
   stockquantity: number;
+  image_path: string;
 }
 
 interface ProductPageProps {
@@ -23,6 +25,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
 }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -52,6 +55,12 @@ const ProductPage: React.FC<ProductPageProps> = ({
   }, [product_id]);
 
   const handleDelete = async () => {
+    if (buttonDisabled) {
+      return;
+    }
+    
+    setButtonDisabled(true);
+    
     try {
       const response = await fetch(
         `http://localhost:8000/api/products/${product_id}`,
@@ -62,45 +71,64 @@ const ProductPage: React.FC<ProductPageProps> = ({
         setNotification("Product Deleted");
         setTimeout(() => {
           setNotification(null);
-          window.location.href = '/products';
+          window.location.href = "/products";
         }, 2000);
       } else {
-        console.error('Failed to delete product');
+        console.error("Failed to delete product");
       }
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
+    }finally {
+      setButtonDisabled(false);
     }
   };
 
-  
   return (
     <div className="container mx-auto p-4">
-      {notification && (
-        <Notification message="Product Deleted" onClose={() => setNotification(null)} />
-      )}
+      {/* {notification && (
+        <Notification
+          message="Product Deleted"
+          onClose={() => setNotification(null)}
+        />
+      )} */}
       {product && (
-        <div className="p-4">
-          <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
-          <p className="text-gray-600 mb-4">{product.description}</p>
-          <p className="text-gray-700 font-semibold mb-2">
-            Price: ${product.price}
-          </p>
-          <p className="text-gray-700 font-semibold">
-            Stock Quantity: {product.stockquantity}
-          </p>
+        <div className="hero min-h-screen bg-base-200">
+          <div className="hero-content flex-col lg:flex-row">
+            <Image
+              src={product.image_path}
+              alt={product.name}
+              width={300}
+              height={400}
+              className="max-w-sm rounded-lg shadow-2xl"
+            />
+            <div>
+              <h1 className="text-5xl font-bold">{product.name}</h1>
+              <p className="py-6">
+              {product.description}
+              </p>
+
+              <p className="text-gray-700 font-semibold">
+                Price: ${product.price}
+              </p>
+              <p className="text-gray-700 font-semibold">
+                Stock Quantity: {product.stockquantity}
+              </p>
+            </div>
+          </div>
         </div>
       )}
       <div className="flex gap-3">
         <button
           onClick={handleDelete}
           className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400"
+          disabled={buttonDisabled}
         >
-          Delete
+          {buttonDisabled ? "Deleting..." : "Delete"}
         </button>
 
         <Link
           href={{
-            pathname: '/edit-product',
+            pathname: "/edit-product",
             query: {
               product_id: product_id,
               name: product?.name,

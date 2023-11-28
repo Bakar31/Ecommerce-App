@@ -1,22 +1,31 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
-import { redirect } from "next/navigation";
-import FormSubmitButton from "../components/formSubmitButton";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 
-const addProducts = () => {
+const AddProducts = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     stockQuantity: "",
+    imgPath: "",
   });
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  function handleChangeInput(event) {
+    console.log(`Selected file - ${event.target.files[0].name}`);
+    setFormData({
+      ...formData,
+      imgPath: `/products/${event.target.files[0].name}`,
+    });
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    
     setFormData({
       ...formData,
       [name]: value,
@@ -25,6 +34,11 @@ const addProducts = () => {
 
   const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (buttonDisabled) {
+      return;
+    }
+    
+    setButtonDisabled(true);
     console.log(formData);
     try {
       const response = await fetch("http://localhost:8000/api/products", {
@@ -42,6 +56,7 @@ const addProducts = () => {
           description: "",
           price: "",
           stockQuantity: "",
+          imgPath: "",
         });
 
         setTimeout(() => {
@@ -52,15 +67,16 @@ const addProducts = () => {
       }
     } catch {
       console.error("Error adding product");
+    }finally {
+      setButtonDisabled(false);
     }
-    // redirect('/');
   };
 
   return (
     <div>
       <h1 className="text-lg font-bold mb-3">Add New Product</h1>
 
-      <form onSubmit={handleAddProductSubmit}>
+      <form action="/upload" method="post" encType="multipart/form-data" onSubmit={handleAddProductSubmit}>
         <div className="mb-3">
           <input
             required
@@ -106,12 +122,28 @@ const addProducts = () => {
             className="input input-bordered input-accent w-full max-w-xl"
           />
         </div>
+
         <div className="mb-3">
-          <FormSubmitButton>Add Product</FormSubmitButton>
+          <input
+            type="file"
+            name="image"
+            className="file-input file-input-bordered file-input-success w-full max-w-xs"
+            onChange={handleChangeInput}
+          />
+        </div>
+
+        <div className="mb-3">
+          <button
+            className="btn btn-info w-full max-w-xl"
+            type="submit"
+            disabled={buttonDisabled}
+          >
+            {buttonDisabled ? 'Adding Product...' : 'Add Product'}
+          </button>
         </div>
       </form>
     </div>
   );
 };
 
-export default addProducts;
+export default AddProducts;
