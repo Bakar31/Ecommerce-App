@@ -2,51 +2,66 @@
 
 import React, { useState, FormEvent, ChangeEvent } from "react";
 
+interface Product {
+  name: string;
+  description: string;
+  price: number;
+  stockQuantity: number;
+  image: File | null;
+}
+
 const AddProducts = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Product>({
     name: "",
     description: "",
-    price: "",
-    stockQuantity: "",
-    imgPath: "",
+    price: 0,
+    stockQuantity: 0,
+    image: null,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
-
-  function handleChangeInput(event) {
-    console.log(`Selected file - ${event.target.files[0].name}`);
-    setFormData({
-      ...formData,
-      imgPath: `/products/${event.target.files[0].name}`,
-    });
-  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    
+
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+
+    if (file) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        image: file,
+      }));
+    }
+  };
+
   const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (buttonDisabled) {
+
+    if (buttonDisabled || !formData.image) {
       return;
     }
-    
+
     setButtonDisabled(true);
-    console.log(formData);
+
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("price", formData.price.toString());
+      formDataToSend.append("stockQuantity", formData.stockQuantity.toString());
+      formDataToSend.append("image", formData.image);
+
       const response = await fetch("http://localhost:8000/api/products", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (response.ok) {
@@ -54,20 +69,16 @@ const AddProducts = () => {
         setFormData({
           name: "",
           description: "",
-          price: "",
-          stockQuantity: "",
-          imgPath: "",
+          price: 0,
+          stockQuantity: 0,
+          image: null,
         });
-
-        setTimeout(() => {
-          window.location.href = "/products";
-        }, 2000);
       } else {
         console.error("Error adding product:", response.statusText);
       }
-    } catch {
-      console.error("Error adding product");
-    }finally {
+    } catch (error) {
+      console.error("Error adding product:", error);
+    } finally {
       setButtonDisabled(false);
     }
   };
@@ -76,7 +87,7 @@ const AddProducts = () => {
     <div>
       <h1 className="text-lg font-bold mb-3">Add New Product</h1>
 
-      <form action="/upload" method="post" encType="multipart/form-data" onSubmit={handleAddProductSubmit}>
+      <form onSubmit={handleAddProductSubmit}>
         <div className="mb-3">
           <input
             required
@@ -138,7 +149,7 @@ const AddProducts = () => {
             type="submit"
             disabled={buttonDisabled}
           >
-            {buttonDisabled ? 'Adding Product...' : 'Add Product'}
+            {buttonDisabled ? "Adding Product..." : "Add Product"}
           </button>
         </div>
       </form>

@@ -1,7 +1,11 @@
 import client from "../config/db";
-import { type Request, type Response } from 'express'
+import { type Request, type Response } from "express";
+import multer from "multer";
+const path = require("path");
 
-export const getAllProducts = async (_req:Request, res:Response) => {
+const UPLOADS_FOLDER = "./products/";
+
+export const getAllProducts = async (_req: Request, res: Response) => {
   try {
     const result = await client.query("SELECT * FROM products");
     const data = result.rows;
@@ -12,25 +16,73 @@ export const getAllProducts = async (_req:Request, res:Response) => {
   }
 };
 
-export const createProduct = async (req:Request, res:Response) => {
-  console.log(req.body);
-  const { name, description, price, stockQuantity, imgPath } = req.body;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_FOLDER);
+  },
+  filename: (req, file, cb) => {
+    const fileExt = path.extname(file.originalname);
+    const fileName =
+      file.originalname
+        .replace(fileExt, "")
+        .toLowerCase()
+        .split(" ")
+        .join("-") +
+      "-" +
+      Date.now();
 
-  if (!name || !description || !price || !stockQuantity || !imgPath) {
-    return res
-      .status(400)
-      .json({ error: "Please provide all required fields." });
-  }
+    cb(null, fileName + fileExt);
+  },
+});
 
-  try {
-    const query =
-      "INSERT INTO products (name, description, price, stockQuantity, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *";
-    const values = [name, description, price, stockQuantity, imgPath];
-    const result = await client.query(query, values);
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1000000, // 1MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.fieldname === "image" &&
+      (file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg")
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only .jpg, .png or .jpeg format allowed!"));
+    }
+  },
+}).single("image");
 
-    return res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error("Error inserting product:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
+export const createProduct = async (req: Request, res: Response) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      console.error("Error uploading file:", err);
+      return res.status(400).json({
+        error: "File upload error",
+        message: err.message,
+      });
+    }
+
+    try {
+      const imgPath = `/products/${req.file?.filename}`;
+      const { name, description, price, stockQuantity } = req.body;
+
+      if (!name || !description || !price || !stockQuantity || !imgPath) {
+        return res
+          .status(400)
+          .json({ error: "Please provide all required fields." });
+      }
+
+      const query =
+        "INSERT INTO products (name, description, price, stockQuantity, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+      const values = [name, description, price, stockQuantity, imgPath];
+      const result = await client.query(query, values);
+
+      return res.status(201).json(result.rows[0]);
+    } catch (error) {
+      console.error("Error inserting product:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 };
