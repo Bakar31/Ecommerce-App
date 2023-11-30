@@ -3,7 +3,7 @@ import { type Request, type Response } from "express";
 import multer from "multer";
 const path = require("path");
 
-const UPLOADS_FOLDER = "./products/";
+const UPLOADS_FOLDER = "./public/";
 
 export const getAllProducts = async (_req: Request, res: Response) => {
   try {
@@ -65,7 +65,8 @@ export const createProduct = async (req: Request, res: Response) => {
     }
 
     try {
-      const imgPath = `/products/${req.file?.filename}`;
+      const imgPath = `/${req.file?.filename}`;
+      console.log(imgPath)
       const { name, description, price, stockQuantity } = req.body;
 
       if (!name || !description || !price || !stockQuantity || !imgPath) {
