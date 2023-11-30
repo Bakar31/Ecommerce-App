@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import Notification from "@/app/components/notification";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Product {
   product_id: number;
@@ -24,8 +24,8 @@ const ProductPage: React.FC<ProductPageProps> = ({
   params: { product_id },
 }) => {
   const [product, setProduct] = useState<Product | null>(null);
-  const [notification, setNotification] = useState<string | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -58,9 +58,8 @@ const ProductPage: React.FC<ProductPageProps> = ({
     if (buttonDisabled) {
       return;
     }
-    
     setButtonDisabled(true);
-    
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/products/${product_id}`,
@@ -68,29 +67,19 @@ const ProductPage: React.FC<ProductPageProps> = ({
       );
 
       if (response.ok) {
-        setNotification("Product Deleted");
-        setTimeout(() => {
-          setNotification(null);
-          window.location.href = "/products";
-        }, 2000);
+        router.push(`/products/`);
       } else {
         console.error("Failed to delete product");
       }
     } catch (error) {
       console.error("Error deleting product:", error);
-    }finally {
+    } finally {
       setButtonDisabled(false);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      {/* {notification && (
-        <Notification
-          message="Product Deleted"
-          onClose={() => setNotification(null)}
-        />
-      )} */}
       {product && (
         <div className="hero min-h-screen bg-base-200">
           <div className="hero-content flex-col lg:flex-row">
@@ -103,9 +92,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
             />
             <div>
               <h1 className="text-5xl font-bold">{product.name}</h1>
-              <p className="py-6">
-              {product.description}
-              </p>
+              <p className="py-6">{product.description}</p>
 
               <p className="text-gray-700 font-semibold">
                 Price: ${product.price}
@@ -120,7 +107,9 @@ const ProductPage: React.FC<ProductPageProps> = ({
       <div className="flex gap-3">
         <button
           onClick={handleDelete}
-          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400"
+          className={`bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400 ${
+            buttonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           disabled={buttonDisabled}
         >
           {buttonDisabled ? "Deleting..." : "Delete"}

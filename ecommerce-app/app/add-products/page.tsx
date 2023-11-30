@@ -75,7 +75,7 @@ const AddProducts = () => {
           stockQuantity: 0,
           image: null,
         });
-        router.push(`/products/`)
+        router.push(`/products/`);
       } else {
         console.error("Error adding product:", response.statusText);
       }
@@ -148,7 +148,9 @@ const AddProducts = () => {
 
         <div className="mb-3">
           <button
-            className="btn btn-info w-full max-w-xl"
+            className={`btn btn-info w-full max-w-xl ${
+              buttonDisabled ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             type="submit"
             disabled={buttonDisabled}
           >
