@@ -7,7 +7,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stockQuantity: number;
+  stockquantity: number;
   image: File | null;
 }
 
@@ -16,7 +16,7 @@ const AddProducts = () => {
     name: "",
     description: "",
     price: 0,
-    stockQuantity: 0,
+    stockquantity: 0,
     image: null,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -58,7 +58,7 @@ const AddProducts = () => {
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("price", formData.price.toString());
-      formDataToSend.append("stockQuantity", formData.stockQuantity.toString());
+      formDataToSend.append("stockQuantity", formData.stockquantity.toString());
       formDataToSend.append("image", formData.image);
 
       const response = await fetch("http://localhost:8000/api/products", {
@@ -72,7 +72,7 @@ const AddProducts = () => {
           name: "",
           description: "",
           price: 0,
-          stockQuantity: 0,
+          stockquantity: 0,
           image: null,
         });
         router.push(`/products/`);
@@ -128,10 +128,10 @@ const AddProducts = () => {
         <div className="mb-3">
           <input
             required
-            name="stockQuantity"
+            name="stockquantity"
             type="number"
             placeholder="Quantity"
-            value={formData.stockQuantity}
+            value={formData.stockquantity}
             onChange={handleChange}
             className="input input-bordered input-accent w-full max-w-xl"
           />

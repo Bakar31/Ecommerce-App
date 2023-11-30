@@ -1,27 +1,24 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useRouter } from "next/router";
 
 const EditProduct = ({
   searchParams,
 }: {
   searchParams: {
     product_id: any;
-    name: string;
-    description: string;
-    price: string;
-    stockQuantity: string;
   };
 }) => {
   const [formData, setFormData] = useState({
-    name: searchParams.name,
-    description: searchParams.description,
-    price: parseFloat(searchParams.price),
-    stockQuantity: parseInt(searchParams.stockQuantity),
+    name: "",
+    description: "",
+    price: 0,
+    stockquantity: 0,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  // const router = useRouter();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,6 +29,32 @@ const EditProduct = ({
       [name]: value,
     });
   };
+
+  const fetchProductData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/products/${searchParams.product_id}`
+      );
+
+      if (response.ok) {
+        const productData = await response.json();
+        setFormData(productData);
+      } else {
+        console.error("Failed to fetch product data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (searchParams.product_id) {
+      fetchProductData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.product_id]);
 
   const handleEditProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,19 +83,23 @@ const EditProduct = ({
           name: "",
           description: "",
           price: 0,
-          stockQuantity: 0,
+          stockquantity: 0,
         });
 
-        router.push(`/products/`);
+        // router.push(`/products/`);
       } else {
         console.error("Error updating product:", response.statusText);
       }
     } catch (error) {
       console.error("Error updating product:", error);
-    }finally {
+    } finally {
       setButtonDisabled(false);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -116,10 +143,10 @@ const EditProduct = ({
         <div className="mb-3">
           <input
             required
-            name="stockQuantity"
+            name="stockquantity"
             type="number"
             placeholder="Quantity"
-            value={formData.stockQuantity}
+            value={formData.stockquantity}
             onChange={handleChange}
             className="input input-bordered input-accent w-full max-w-xl"
           />

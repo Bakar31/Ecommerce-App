@@ -1,7 +1,7 @@
 import client from "../config/db";
 import { type Request, type Response } from 'express'
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 export const getProductById = async (req:Request, res:Response) => {
   const productId = req.params.id;
@@ -26,7 +26,7 @@ export const getProductById = async (req:Request, res:Response) => {
 
 export const updateProduct = async (req:Request, res:Response) => {
   const productId = req.params.id;
-  const { name, description, price, stockQuantity } = req.body;
+  const { name, description, price, stockquantity } = req.body;
   try {
     const checkProduct = await client.query(
       "SELECT * FROM products WHERE product_id = $1",
@@ -40,8 +40,8 @@ export const updateProduct = async (req:Request, res:Response) => {
     }
 
     const result = await client.query(
-      "UPDATE products SET name = $1, description = $2, price = $3, stockQuantity = $4 WHERE product_id = $5 RETURNING *",
-      [name, description, price, stockQuantity, productId]
+      "UPDATE products SET name = $1, description = $2, price = $3, stockquantity = $4 WHERE product_id = $5 RETURNING *",
+      [name, description, price, stockquantity, productId]
     );
 
     return res.json(result.rows[0]);

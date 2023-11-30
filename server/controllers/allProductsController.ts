@@ -76,7 +76,7 @@ export const createProduct = async (req: Request, res: Response) => {
       }
 
       const query =
-        "INSERT INTO products (name, description, price, stockQuantity, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+        "INSERT INTO products (name, description, price, stockquantity, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *";
       const values = [name, description, price, stockQuantity, imgPath];
       const result = await client.query(query, values);
 
