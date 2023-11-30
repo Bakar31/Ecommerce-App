@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, FormEvent, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 
 interface Product {
   name: string;
@@ -19,6 +20,7 @@ const AddProducts = () => {
     image: null,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const router = useRouter();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -73,6 +75,7 @@ const AddProducts = () => {
           stockQuantity: 0,
           image: null,
         });
+        router.push(`/products/`)
       } else {
         console.error("Error adding product:", response.statusText);
       }
