@@ -2,6 +2,16 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+interface Product {
+  name: string;
+  description: string;
+  price: number;
+  stockquantity: number;
+  image_path: string;
+  image: File | null;
+}
 
 const EditProduct = ({
   searchParams,
@@ -10,11 +20,13 @@ const EditProduct = ({
     product_id: any;
   };
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Product>({
     name: "",
     description: "",
     price: 0,
     stockquantity: 0,
+    image_path: "",
+    image: null,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,6 +50,7 @@ const EditProduct = ({
 
       if (response.ok) {
         const productData = await response.json();
+        // console.log(productData)
         setFormData(productData);
       } else {
         console.error("Failed to fetch product data:", response.statusText);
@@ -53,7 +66,7 @@ const EditProduct = ({
     if (searchParams.product_id) {
       fetchProductData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.product_id]);
 
   const handleEditProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -61,10 +74,10 @@ const EditProduct = ({
     if (buttonDisabled) {
       return;
     }
-    
+
     setButtonDisabled(true);
     console.log(formData);
-  
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/products/${searchParams.product_id}`,
@@ -84,6 +97,8 @@ const EditProduct = ({
           description: "",
           price: 0,
           stockquantity: 0,
+          image_path: "",
+          image: null,
         });
 
         router.push(`/products/`);
@@ -97,8 +112,70 @@ const EditProduct = ({
     }
   };
 
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+
+    if (file) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        image: file,
+      }));
+    }
+  };
+
+  const handleUpdateProductProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (buttonDisabled) {
+      return;
+    }
+
+    console.log(formData);
+    console.log('Hello from update image')
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("price", formData.price.toString());
+      formDataToSend.append("stockQuantity", formData.stockquantity.toString());
+      if (formData.image) {
+        formDataToSend.append("image", formData.image);
+      }
+      formDataToSend.append("product_id", searchParams.product_id);
+      
+      const response = await fetch(
+        `http://localhost:8000/api/products/${searchParams.product_id}/image`,
+        {
+          method: "PUT",
+          body: formDataToSend,
+        }
+      );
+
+      if (response.ok) {
+        console.log("Product updated");
+        setFormData({
+          name: "",
+          description: "",
+          price: 0,
+          stockquantity: 0,
+          image_path: "",
+          image: null,
+        });
+
+        router.push(`/products/`);
+      } else {
+        console.error("Error updating product:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating product:", error);
+    } finally {
+      setButtonDisabled(false);
+    }
+  };
+
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><span className="loading loading-spinner loading-lg"></span></div>;
   }
 
   return (
@@ -158,6 +235,34 @@ const EditProduct = ({
             disabled={buttonDisabled}
           >
             {buttonDisabled ? "Updating Product..." : "Update Product"}
+          </button>
+        </div>
+      </form>
+
+      <div className="flex">
+        <Image
+          src={formData.image_path}
+          alt={formData.name}
+          width={300}
+          height={300}
+        />
+      </div>
+      <form onSubmit={handleUpdateProductProductSubmit}>
+        <div className="mb-4">
+          <input
+            type="file"
+            name="image"
+            className="file-input file-input-bordered file-input-success w-full max-w-xs"
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div className="mb-4">
+          <button
+            className="btn btn-primary w-full max-w-xl"
+            type="submit"
+            disabled={buttonDisabled}
+          >
+            {buttonDisabled ? "Updating Image..." : "Update Image"}
           </button>
         </div>
       </form>
