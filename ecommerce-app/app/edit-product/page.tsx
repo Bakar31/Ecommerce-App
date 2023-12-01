@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const EditProduct = ({
   searchParams,
@@ -18,7 +18,7 @@ const EditProduct = ({
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(true);
-  // const router = useRouter();
+  const router = useRouter();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -86,7 +86,7 @@ const EditProduct = ({
           stockquantity: 0,
         });
 
-        // router.push(`/products/`);
+        router.push(`/products/`);
       } else {
         console.error("Error updating product:", response.statusText);
       }
