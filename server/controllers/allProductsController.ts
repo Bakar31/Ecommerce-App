@@ -1,9 +1,9 @@
 import client from "../config/db";
 import { type Request, type Response } from "express";
 import multer from "multer";
-const path = require("path");
+import path from "path";
 
-const UPLOADS_FOLDER = ".././ecommerce-app/public/products/";
+const UPLOADS_FOLDER = ".././server/public/products/";
 
 export const getAllProducts = async (_req: Request, res: Response) => {
   try {

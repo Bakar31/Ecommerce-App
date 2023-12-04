@@ -4,7 +4,7 @@ import fs from 'fs';
 import multer from "multer";
 import path from "path";
 
-const UPLOADS_FOLDER = ".././ecommerce-app/public/products/"
+const UPLOADS_FOLDER = ".././server/public/products/"
 
 export const getProductById = async (req:Request, res:Response) => {
   const productId = req.params.id;
@@ -82,7 +82,8 @@ export const deleteProduct = async (req: Request, res: Response) => {
     );
 
     // Delete product image
-    const fullPath = path.join(__dirname, "../../ecommerce-app/public/", imgPath);
+    const fullPath = path.join(__dirname, "../public/", imgPath);
+    console.log(fullPath)
     try {
       if (imgPath && fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
@@ -110,9 +111,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
+// Update image
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOADS_FOLDER);

@@ -24,33 +24,33 @@ const ProductCard: React.FC<Product> = ({
   product_id,
   image_path,
 }) => {
+  const src = `http://localhost:8000${image_path}`;
   return (
     <Link href={`/products/${product_id}`}>
       <div className="card w-96 bg-base-110 shadow-xl hover: transition">
-
-        {image_path && image_path.trim() !== '' ? (
-        <Image
-          src={image_path}
-          width={800}
-          height={400}
-          alt={name}
-          className="h-48 object-cover"
-        />
-      ) : (
-        <Image
-          src='/products/default.jpg'
-          width={800}
-          height={400}
-          alt="Default"
-          className="h-48 object-cover"
-        />
-      )}
+        {image_path && image_path.trim() !== "" ? (
+          <Image
+            loader={() => src}
+            src={src}
+            width={800}
+            height={400}
+            alt={name}
+            className="h-48 object-cover"
+          />
+        ) : (
+          <Image
+            src="/products/default.jpg"
+            width={800}
+            height={400}
+            alt="Default"
+            className="h-48 object-cover"
+          />
+        )}
 
         <div className="card-body">
           <h2 className="card-title">{name}</h2>
           <p>{description.slice(0, 50)}</p>
-          <PriceTag price={price}/>
-          {/* <p>Price: {price}$</p> */}
+          <PriceTag price={price} />
           <div className="card-actions justify-end">
             <button className="btn btn-success">Buy Now</button>
           </div>

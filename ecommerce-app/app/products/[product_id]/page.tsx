@@ -84,7 +84,8 @@ const ProductPage: React.FC<ProductPageProps> = ({
         <div className="hero min-h-screen bg-base-200">
           <div className="hero-content flex-col lg:flex-row">
             <Image
-              src={product.image_path}
+              loader={() => `http://localhost:8000${product.image_path}`}
+              src={`http://localhost:8000${product.image_path}`}
               alt={product.name}
               width={300}
               height={400}
