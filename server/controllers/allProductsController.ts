@@ -66,7 +66,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
     try {
       const imgPath = `/products/${req.file?.filename}`;
-      console.log(imgPath)
+      console.log(imgPath);
       const { name, description, price, stockQuantity } = req.body;
 
       if (!name || !description || !price || !stockQuantity || !imgPath) {

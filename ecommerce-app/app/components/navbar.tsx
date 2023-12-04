@@ -23,7 +23,7 @@ const Navbar = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img alt="Tailwind CSS Navbar component" src="http://localhost:8000/user.jpg" />
+              <img alt="user" src="http://localhost:8000/user.jpg" />
             </div>
           </label>
           <ul

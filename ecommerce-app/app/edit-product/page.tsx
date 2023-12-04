@@ -99,7 +99,6 @@ const EditProduct = ({
           image_path: "",
           image: null,
         });
-
       } else {
         console.error("Error updating product:", response.statusText);
       }
@@ -121,7 +120,9 @@ const EditProduct = ({
     }
   };
 
-  const handleUpdateProductProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleUpdateProductProductSubmit = async (
+    e: FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     if (imgbuttonDisabled) {
       return;
@@ -170,9 +171,12 @@ const EditProduct = ({
     }
   };
 
-
   if (loading) {
-    return <div><span className="loading loading-spinner loading-lg"></span></div>;
+    return (
+      <div>
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (

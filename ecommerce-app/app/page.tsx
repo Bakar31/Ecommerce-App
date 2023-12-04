@@ -1,22 +1,20 @@
-import Image from 'next/image'
-import Products from './products/page'
+import Image from "next/image";
+import Products from "./products/page";
 
 export default function Home() {
   return (
     <div>
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <Image
           src="/cover-photo.jpg"
           width={700}
           height={500}
-          alt="Cover photo" 
-          />
+          alt="Cover photo"
+        />
       </div>
       <div>
-        <Products/>
+        <Products />
       </div>
     </div>
-    
-    
-  )
+  );
 }

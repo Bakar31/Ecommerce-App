@@ -1,12 +1,12 @@
 import client from "../config/db";
-import { type Request, type Response } from 'express'
-import fs from 'fs';
+import { type Request, type Response } from "express";
+import fs from "fs";
 import multer from "multer";
 import path from "path";
 
-const UPLOADS_FOLDER = ".././server/public/products/"
+const UPLOADS_FOLDER = ".././server/public/products/";
 
-export const getProductById = async (req:Request, res:Response) => {
+export const getProductById = async (req: Request, res: Response) => {
   const productId = req.params.id;
 
   try {
@@ -27,7 +27,7 @@ export const getProductById = async (req:Request, res:Response) => {
   }
 };
 
-export const updateProduct = async (req:Request, res:Response) => {
+export const updateProduct = async (req: Request, res: Response) => {
   const productId = req.params.id;
   const { name, description, price, stockquantity } = req.body;
   try {
@@ -83,13 +83,13 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     // Delete product image
     const fullPath = path.join(__dirname, "../public/", imgPath);
-    console.log(fullPath)
+    console.log(fullPath);
     try {
       if (imgPath && fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        console.log('Image file deleted successfully');
+        console.log("Image file deleted successfully");
       } else {
-        console.log('Image file not found');
+        console.log("Image file not found");
       }
 
       if (result.rowCount === 0) {
@@ -162,9 +162,9 @@ export const updateProductImage = async (req: Request, res: Response) => {
 
     try {
       const imgPath = `/products/${req.file?.filename}`;
-      console.log(` ${imgPath}`)
+      console.log(` ${imgPath}`);
       const { name, description, price, stockQuantity, product_id } = req.body;
-      console.log(req.body)
+      console.log(req.body);
 
       if (!name || !description || !price || !stockQuantity || !imgPath) {
         return res
@@ -178,10 +178,17 @@ export const updateProductImage = async (req: Request, res: Response) => {
       WHERE product_id = $6 
       RETURNING *
     `;
-    
-    const values = [name, description, price, stockQuantity, imgPath, product_id];
-    console.log(values)
-    const result = await client.query(query, values);
+
+      const values = [
+        name,
+        description,
+        price,
+        stockQuantity,
+        imgPath,
+        product_id,
+      ];
+      console.log(values);
+      const result = await client.query(query, values);
 
       return res.status(201).json(result.rows[0]);
     } catch (error) {

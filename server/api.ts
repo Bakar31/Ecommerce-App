@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
-import path from 'path';
-import router from "./routes/productRoutes";;
+import path from "path";
+import router from "./routes/productRoutes";
 
 const app = express();
 const PORT = 8000;
 
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 const corsOptions = {
   origin: ["http://localhost:3000"],
@@ -19,7 +19,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use('/api/products', router);
+app.use("/api/products", router);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

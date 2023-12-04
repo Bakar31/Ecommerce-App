@@ -32,7 +32,7 @@ const Products = () => {
 
   return (
     <div>
-        <ProductList products={products} />
+      <ProductList products={products} />
     </div>
   );
 };
