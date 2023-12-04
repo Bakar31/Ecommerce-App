@@ -1,33 +1,18 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 const Navbar = () => {
   return (
     <div className="navbar bg-base-100 flex justify-between items-center">
       <div className="flex gap-1 justify-center">
-      <h1 className="text-2xl font-bold">SazimStore!</h1>
         <Link
-          className="bg-transparent hover:bg-blue-500 text-black font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          className="bg-transparent text-2xl text-black font-semibold"
           href="/"
           prefetch={false}
         >
-          Home
-        </Link>
-        <Link
-          className="bg-transparent hover:bg-blue-500 text-black font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-          href="/products"
-          prefetch={false}
-        >
-          Products
-        </Link>
-        <Link
-          className="bg-transparent hover:bg-blue-500 text-black font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-          href="/add-products"
-          prefetch={false}
-        >
-          New Product
+          SazimStore
         </Link>
       </div>
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end bg-base-80">
         <div className="form-control">
           <input
             type="text"
@@ -50,6 +35,20 @@ const Navbar = () => {
                 Profile
                 <span className="badge">New</span>
               </a>
+              <Link
+                className="justify-between"
+                href="/products"
+                prefetch={false}
+              >
+                Products
+              </Link>
+              <Link
+                className="justify-between"
+                href="/add-products"
+                prefetch={false}
+              >
+                New Product
+              </Link>
             </li>
             <li>
               <a>Settings</a>

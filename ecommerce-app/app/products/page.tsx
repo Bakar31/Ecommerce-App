@@ -32,10 +32,7 @@ const Products = () => {
 
   return (
     <div>
-      <div className="space-y-8">
-        <h1 className="text-2xl font-bold text">Product List</h1>
-      </div>
-      <ProductList products={products} />
+        <ProductList products={products} />
     </div>
   );
 };

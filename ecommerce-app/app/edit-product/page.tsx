@@ -29,6 +29,7 @@ const EditProduct = ({
     image: null,
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [imgbuttonDisabled, setImgButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -50,7 +51,6 @@ const EditProduct = ({
 
       if (response.ok) {
         const productData = await response.json();
-        // console.log(productData)
         setFormData(productData);
       } else {
         console.error("Failed to fetch product data:", response.statusText);
@@ -76,7 +76,6 @@ const EditProduct = ({
     }
 
     setButtonDisabled(true);
-    console.log(formData);
 
     try {
       const response = await fetch(
@@ -101,7 +100,6 @@ const EditProduct = ({
           image: null,
         });
 
-        router.push(`/products/`);
       } else {
         console.error("Error updating product:", response.statusText);
       }
@@ -125,12 +123,11 @@ const EditProduct = ({
 
   const handleUpdateProductProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (buttonDisabled) {
+    if (imgbuttonDisabled) {
       return;
     }
 
-    console.log(formData);
-    console.log('Hello from update image')
+    setImgButtonDisabled(true);
 
     try {
       const formDataToSend = new FormData();
@@ -142,7 +139,7 @@ const EditProduct = ({
         formDataToSend.append("image", formData.image);
       }
       formDataToSend.append("product_id", searchParams.product_id);
-      
+
       const response = await fetch(
         `http://localhost:8000/api/products/${searchParams.product_id}/image`,
         {
@@ -169,7 +166,7 @@ const EditProduct = ({
     } catch (error) {
       console.error("Error updating product:", error);
     } finally {
-      setButtonDisabled(false);
+      setImgButtonDisabled(false);
     }
   };
 
@@ -260,9 +257,9 @@ const EditProduct = ({
           <button
             className="btn btn-primary w-full max-w-xl"
             type="submit"
-            disabled={buttonDisabled}
+            disabled={imgbuttonDisabled}
           >
-            {buttonDisabled ? "Updating Image..." : "Update Image"}
+            {imgbuttonDisabled ? "Updating Image..." : "Update Image"}
           </button>
         </div>
       </form>

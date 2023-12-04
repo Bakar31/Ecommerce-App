@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import PriceTag from "./PriceTag";
 
 interface Product {
   name: string;
@@ -48,7 +49,8 @@ const ProductCard: React.FC<Product> = ({
         <div className="card-body">
           <h2 className="card-title">{name}</h2>
           <p>{description.slice(0, 50)}</p>
-          <p>Price: {price}$</p>
+          <PriceTag price={price}/>
+          {/* <p>Price: {price}$</p> */}
           <div className="card-actions justify-end">
             <button className="btn btn-success">Buy Now</button>
           </div>
