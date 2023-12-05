@@ -51,6 +51,9 @@ const EditProduct = ({
 
       if (response.ok) {
         const productData = await response.json();
+        if (productData.image_path) {
+          productData.image_path = `http://localhost:8000${productData.image_path}`;
+        }
         setFormData(productData);
       } else {
         console.error("Failed to fetch product data:", response.statusText);
@@ -140,6 +143,9 @@ const EditProduct = ({
         formDataToSend.append("image", formData.image);
       }
       formDataToSend.append("product_id", searchParams.product_id);
+
+      const formDataArray = Array.from(formDataToSend.entries());
+      console.log(formDataArray);
 
       const response = await fetch(
         `http://localhost:8000/api/products/${searchParams.product_id}/image`,
@@ -241,7 +247,7 @@ const EditProduct = ({
       </form>
 
       <div className="flex">
-        <Image
+        <img
           src={formData.image_path}
           alt={formData.name}
           width={300}

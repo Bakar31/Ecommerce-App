@@ -1,15 +1,15 @@
-import client from "../config/db";
+import { PrismaClient } from '@prisma/client';
 import { type Request, type Response } from "express";
 import multer from "multer";
 import path from "path";
 
+const prisma = new PrismaClient();
 const UPLOADS_FOLDER = ".././server/public/products/";
 
 export const getAllProducts = async (_req: Request, res: Response) => {
   try {
-    const result = await client.query("SELECT * FROM products");
-    const data = result.rows;
-    return res.json(data);
+    const products = await prisma.products.findMany();
+    return res.json(products);
   } catch (error) {
     console.error("Error executing query:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -66,7 +66,6 @@ export const createProduct = async (req: Request, res: Response) => {
 
     try {
       const imgPath = `/products/${req.file?.filename}`;
-      console.log(imgPath);
       const { name, description, price, stockQuantity } = req.body;
 
       if (!name || !description || !price || !stockQuantity || !imgPath) {
@@ -75,12 +74,17 @@ export const createProduct = async (req: Request, res: Response) => {
           .json({ error: "Please provide all required fields." });
       }
 
-      const query =
-        "INSERT INTO products (name, description, price, stockquantity, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *";
-      const values = [name, description, price, stockQuantity, imgPath];
-      const result = await client.query(query, values);
+      const newProduct = await prisma.products.create({
+        data: {
+          name,
+          description,
+          price,
+          stockquantity: parseInt(stockQuantity),
+          image_path: imgPath,
+        },
+      });
 
-      return res.status(201).json(result.rows[0]);
+      return res.status(201).json(newProduct);
     } catch (error) {
       console.error("Error inserting product:", error);
       return res.status(500).json({ error: "Internal Server Error" });

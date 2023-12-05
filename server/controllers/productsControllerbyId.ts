@@ -1,113 +1,104 @@
-import client from "../config/db";
+import { PrismaClient } from '@prisma/client';
 import { type Request, type Response } from "express";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
 
+import client from "../config/db";
+
+const prisma = new PrismaClient();
 const UPLOADS_FOLDER = ".././server/public/products/";
 
 export const getProductById = async (req: Request, res: Response) => {
-  const productId = req.params.id;
+  const productId = parseInt(req.params.id);
 
   try {
-    const result = await client.query(
-      "SELECT * FROM products WHERE product_id = $1",
-      [productId]
-    );
-    if (result.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ error: `Product with ID ${productId} not found` });
+    const product = await prisma.products.findUnique({
+      where: {
+        product_id: productId,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: `Product with ID ${productId} not found` });
     }
 
-    return res.json(result.rows[0]);
+    return res.json(product);
   } catch (error) {
-    console.error("Error fetching product:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error fetching product:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
-  const productId = req.params.id;
+  const productId = parseInt(req.params.id);
   const { name, description, price, stockquantity } = req.body;
+
   try {
-    const checkProduct = await client.query(
-      "SELECT * FROM products WHERE product_id = $1",
-      [productId]
-    );
+    const updatedProduct = await prisma.products.update({
+      where: {
+        product_id: productId,
+      },
+      data: {
+        name,
+        description,
+        price,
+        stockquantity,
+      },
+    });
 
-    if (checkProduct.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ error: `Product with ID ${productId} not found` });
-    }
-
-    const result = await client.query(
-      "UPDATE products SET name = $1, description = $2, price = $3, stockquantity = $4 WHERE product_id = $5 RETURNING *",
-      [name, description, price, stockquantity, productId]
-    );
-
-    return res.json(result.rows[0]);
+    return res.json(updatedProduct);
   } catch (error) {
-    console.error("Error updating product:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error updating product:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
-  const productId = req.params.id;
-  let imgPath: string;
+  const productId = parseInt(req.params.id);
 
   try {
-    const imgeInfo = await client.query(
-      "SELECT image_path FROM products WHERE product_id = $1",
-      [productId]
-    );
-    const product = imgeInfo.rows[0];
+    const product = await prisma.products.findUnique({
+      where: {
+        product_id: productId,
+      },
+      select: {
+        image_path: true,
+      },
+    });
+
     if (!product || !product.image_path) {
       return res
         .status(404)
-        .json({ error: "Product not found or image path is missing" });
+        .json({ error: 'Product not found or image path is missing' });
     }
-    imgPath = product.image_path;
-  } catch (error) {
-    console.error("Error getting the product image:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
 
-  try {
-    const result = await client.query(
-      "DELETE FROM products WHERE product_id = $1",
-      [productId]
-    );
+    const deletedProduct = await prisma.products.delete({
+      where: {
+        product_id: productId,
+      },
+    });
 
-    // Delete product image
-    const fullPath = path.join(__dirname, "../public/", imgPath);
-    console.log(fullPath);
+    const fullPath = path.join(__dirname, `../public/${product.image_path}`);
+    
     try {
-      if (imgPath && fs.existsSync(fullPath)) {
+      if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        console.log("Image file deleted successfully");
+        console.log('Image file deleted successfully');
       } else {
-        console.log("Image file not found");
-      }
-
-      if (result.rowCount === 0) {
-        return res
-          .status(404)
-          .json({ error: `Product with ID ${productId} not found` });
+        console.log('Image file not found');
       }
 
       return res.json({
         message: `Product with ID ${productId} deleted successfully`,
       });
     } catch (error) {
-      console.error("Error deleting image file:", error);
-      return res.status(500).json({ error: "Error deleting image file" });
+      console.error('Error deleting image file:', error);
+      return res.status(500).json({ error: 'Error deleting image file' });
     }
   } catch (error) {
-    console.error("Error deleting product:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error deleting product:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -162,9 +153,7 @@ export const updateProductImage = async (req: Request, res: Response) => {
 
     try {
       const imgPath = `/products/${req.file?.filename}`;
-      console.log(` ${imgPath}`);
       const { name, description, price, stockQuantity, product_id } = req.body;
-      console.log(req.body);
 
       if (!name || !description || !price || !stockQuantity || !imgPath) {
         return res
@@ -172,25 +161,20 @@ export const updateProductImage = async (req: Request, res: Response) => {
           .json({ error: "Please provide all required fields." });
       }
 
-      const query = `
-      UPDATE products 
-      SET name = $1, description = $2, price = $3, stockquantity = $4, image_path = $5 
-      WHERE product_id = $6 
-      RETURNING *
-    `;
+      const updatedProduct = await prisma.products.update({
+        where: {
+          product_id: parseInt(product_id), // Assuming product_id is a number
+        },
+        data: {
+          name,
+          description,
+          price,
+          stockquantity: parseInt(stockQuantity), // Ensure correct property name
+          image_path: imgPath,
+        },
+      });
 
-      const values = [
-        name,
-        description,
-        price,
-        stockQuantity,
-        imgPath,
-        product_id,
-      ];
-      console.log(values);
-      const result = await client.query(query, values);
-
-      return res.status(201).json(result.rows[0]);
+      return res.status(201).json(updatedProduct);
     } catch (error) {
       console.error("Error updating image:", error);
       return res.status(500).json({ error: "Internal Server Error" });
