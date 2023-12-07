@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 import { type Request, type Response } from "express";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
-
-import client from "../config/db";
 
 const prisma = new PrismaClient();
 const UPLOADS_FOLDER = ".././server/public/products/";
@@ -20,13 +18,15 @@ export const getProductById = async (req: Request, res: Response) => {
     });
 
     if (!product) {
-      return res.status(404).json({ error: `Product with ID ${productId} not found` });
+      return res
+        .status(404)
+        .json({ error: `Product with ID ${productId} not found` });
     }
 
     return res.json(product);
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching product:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -49,8 +49,8 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     return res.json(updatedProduct);
   } catch (error) {
-    console.error('Error updating product:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error updating product:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -70,7 +70,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     if (!product || !product.image_path) {
       return res
         .status(404)
-        .json({ error: 'Product not found or image path is missing' });
+        .json({ error: "Product not found or image path is missing" });
     }
 
     const deletedProduct = await prisma.products.delete({
@@ -80,25 +80,25 @@ export const deleteProduct = async (req: Request, res: Response) => {
     });
 
     const fullPath = path.join(__dirname, `../public/${product.image_path}`);
-    
+
     try {
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        console.log('Image file deleted successfully');
+        console.log("Image file deleted successfully");
       } else {
-        console.log('Image file not found');
+        console.log("Image file not found");
       }
 
       return res.json({
         message: `Product with ID ${productId} deleted successfully`,
       });
     } catch (error) {
-      console.error('Error deleting image file:', error);
-      return res.status(500).json({ error: 'Error deleting image file' });
+      console.error("Error deleting image file:", error);
+      return res.status(500).json({ error: "Error deleting image file" });
     }
   } catch (error) {
-    console.error('Error deleting product:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error deleting product:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -163,13 +163,13 @@ export const updateProductImage = async (req: Request, res: Response) => {
 
       const updatedProduct = await prisma.products.update({
         where: {
-          product_id: parseInt(product_id), // Assuming product_id is a number
+          product_id: parseInt(product_id),
         },
         data: {
           name,
           description,
           price,
-          stockquantity: parseInt(stockQuantity), // Ensure correct property name
+          stockquantity: parseInt(stockQuantity),
           image_path: imgPath,
         },
       });

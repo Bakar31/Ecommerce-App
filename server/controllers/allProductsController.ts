@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 import { type Request, type Response } from "express";
 import multer from "multer";
 import path from "path";
