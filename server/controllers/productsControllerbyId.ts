@@ -32,7 +32,10 @@ export const getProductById = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const productId = parseInt(req.params.id);
-  const { name, description, price, stockquantity } = req.body;
+  let { name, description, price, stockquantity } = req.body;
+
+  price = parseInt(price);
+  stockquantity = parseInt(stockquantity);
 
   try {
     const updatedProduct = await prisma.products.update({
