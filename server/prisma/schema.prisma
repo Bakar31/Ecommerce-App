@@ -15,3 +15,12 @@ model products {
   stockquantity Int
   image_path    String? @db.VarChar(255)
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedUt DateTime @updatedAt
+}

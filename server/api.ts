@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import router from "./routes/productRoutes";
+import userRouter from "./routes/userRoutes";
 
 const app = express();
 const PORT = 8000;
@@ -20,6 +21,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api/products", router);
+app.use("/api/user", userRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
