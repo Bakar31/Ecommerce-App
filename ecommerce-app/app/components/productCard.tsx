@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -29,8 +30,7 @@ const ProductCard: React.FC<Product> = ({
     <Link href={`/products/${product_id}`}>
       <div className="card w-96 bg-base-110 shadow-xl hover: transition">
         {image_path && image_path.trim() !== "" ? (
-          <Image
-            loader={() => src}
+          <img
             src={src}
             width={800}
             height={400}
@@ -38,7 +38,7 @@ const ProductCard: React.FC<Product> = ({
             className="h-48 object-cover"
           />
         ) : (
-          <Image
+          <img
             src="/products/default.jpg"
             width={800}
             height={400}

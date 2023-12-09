@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { compare, hash } from "bcrypt";
 import * as z from 'zod';
 import jwt from 'jsonwebtoken';
+import cookie from 'cookie';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -87,10 +88,16 @@ export const loginUser = async (req: Request, res: Response) => {
             expiresIn: '1h',
         });
 
+        const cookieOptions = {
+            httpOnly: true, // Cookie cannot be accessed by client-side scripts
+        };
+
+        res.setHeader('Set-Cookie', cookie.serialize('userToken', token, cookieOptions));
         res.status(200).json({
             message: "Login successful",
             token,
         });
+
     } catch (error) {
         console.error("Error logging in:", error);
         res.status(500).json({ error: "Error logging in" });

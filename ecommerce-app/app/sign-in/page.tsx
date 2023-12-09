@@ -4,6 +4,7 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { NextRequest, NextResponse } from "next/server";
 
 interface User {
     email: string;
@@ -32,6 +33,7 @@ const SignIn = () => {
         try {
             const response = await fetch('http://localhost:8000/api/user/login', {
                 method: 'POST',
+                credentials: 'include', 
                 headers: {
                     'Content-Type': 'application/json',
                 },
