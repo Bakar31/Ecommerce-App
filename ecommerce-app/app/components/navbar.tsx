@@ -38,7 +38,7 @@ const Navbar = () => {
               </a> */}
               <Link
                 className="justify-between"
-                href="/sign-in"
+                href="/user/sign-in"
                 prefetch={false}
               >
                 Sign-in

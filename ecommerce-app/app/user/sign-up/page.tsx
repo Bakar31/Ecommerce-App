@@ -67,7 +67,7 @@ const SignUp = () => {
                 email: "",
                 password: "",
             });
-            router.push('/sign-in')
+            router.push('/user/sign-in')
 
         } catch (error) {
             console.error('Error:', error);
@@ -83,7 +83,7 @@ const SignUp = () => {
                     className="flex items-center mb-6 text-2xl font-semibold text-gray-900"
                 >
                     <img
-                        className="w-15 h-10 mr-2"
+                        className="w-15 h-6 mr-2"
                         src="https://www.sazim.io/_next/static/media/sazim-logo.a56d8831.svg"
                         alt="logo"
                     />
@@ -196,7 +196,7 @@ const SignUp = () => {
                             <p className="text-sm font-light text-blac">
                                 Already have an account?{" "}
                                 <a
-                                    href="/sign-in"
+                                    href="/user/sign-in"
                                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >
                                     Login here
