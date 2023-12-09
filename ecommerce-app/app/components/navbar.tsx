@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 const Navbar = () => {
@@ -31,10 +32,17 @@ const Navbar = () => {
             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">
+              {/* <a className="justify-between">
                 Profile
                 <span className="badge">New</span>
-              </a>
+              </a> */}
+              <Link
+                className="justify-between"
+                href="/sign-in"
+                prefetch={false}
+              >
+                Sign-in
+              </Link>
               <Link
                 className="justify-between"
                 href="/products"
