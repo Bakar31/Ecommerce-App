@@ -36,14 +36,14 @@ app.use("/api/user", userRouter);
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Define the callback route for Google to redirect to after authentication
+//Sign up
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 app.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login-failure' }),
   (req, res) => {
-    res.redirect('http://localhost:3000/user/sign-in');
+    res.redirect('http://localhost:3000/');
   }
 );
 

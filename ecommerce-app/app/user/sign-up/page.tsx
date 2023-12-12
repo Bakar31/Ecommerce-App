@@ -79,7 +79,7 @@ const SignUp = () => {
 
     const googleAuthHandler = () => {
         window.location.href = 'http://localhost:8000/auth/google';
-      };
+    };
 
     return (
         <section className="bg-base-80">

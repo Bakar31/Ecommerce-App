@@ -53,10 +53,40 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
+export const resetPassword =async (req: Request, res: Response) => {
+  const { email, newPassword } = req.body;
 
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  console.log(email)
+  console.log(password)
 
   try {
     const user = await prisma.user.findUnique({
@@ -78,6 +108,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const token = jwt.sign({ userId: user.id }, "bakar31", {
       expiresIn: "1h",
     });
+    console.log(token)
 
     res.cookie("userToken", token, {
       httpOnly: true,

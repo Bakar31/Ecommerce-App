@@ -1,5 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+import { compare, hash } from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -13,7 +14,7 @@ passport.use(
             clientSecret: "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",
             callbackURL: "http://localhost:8000/auth/google/callback",
         },
-        async  (
+        async (
             accessToken: any,
             refreshToken: any,
             profile: any,
@@ -24,30 +25,49 @@ passport.use(
                 const userName = profile.displayName || 'Default Name';
                 const userGoogleId = profile.id;
 
-                // Find the user by email in the database
                 let user = await prisma.user.findUnique({
                     where: { email: userEmail },
                 });
 
                 if (!user) {
+                    const hashPassword = await hash(userGoogleId, 10);
                     user = await prisma.user.create({
                         data: {
                             email: userEmail,
                             name: userName,
-                            password: userGoogleId, // Save Google ID as the password
+                            password: hashPassword,
                         },
                     });
-                } else {
 
-                    console.log('Email already exists!')
-                //     // If the user exists, update their information (if necessary)
-                //     user = await prisma.user.update({
-                //         where: { email: userEmail },
-                //         data: {
-                //             name: userName,
-                //             password: userGoogleId,
-                //         },
-                //     });
+                    const userLogin = {
+                        email: userEmail,
+                        password: userGoogleId, 
+                    };
+
+                    const response = await fetch("http://localhost:8000/api/user/login", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(userLogin),
+                    });
+
+                } else {
+                    console.log('Email already exists. Logging in instead.')
+                    const userLogin = {
+                        email: userEmail,
+                        password: userGoogleId, 
+                    };
+
+                    const response = await fetch("http://localhost:8000/api/user/login", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(userLogin),
+                    });
                 }
 
                 return done(null, user);
