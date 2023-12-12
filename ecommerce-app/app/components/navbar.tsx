@@ -1,7 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
+"use client"
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/user/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        router.push('/user/sign-in');
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
   return (
     <div className="navbar bg-base-100 flex justify-between items-center">
       <div className="flex gap-1 justify-center">
@@ -62,7 +85,7 @@ const Navbar = () => {
               <a>Settings</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={handleLogout}>Logout</a>
             </li>
           </ul>
         </div>

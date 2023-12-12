@@ -4,16 +4,17 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface User {
-    username: string;
+    name: string;
     email: string;
     password: string;
 }
+
 
 /* eslint-disable @next/next/no-img-element */
 const SignUp = () => {
     const router = useRouter();
     const [formData, setFormData] = useState<User>({
-        username: "",
+        name: "",
         email: "",
         password: "",
     });
@@ -51,29 +52,34 @@ const SignUp = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/api/user/createUser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await fetch(
+                "http://localhost:8000/api/user/createUser",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
 
             const data = await response.json();
             console.log(data);
 
             setFormData({
-                username: "",
+                name: "",
                 email: "",
                 password: "",
             });
-            router.push('/user/sign-in')
-
+            router.push("/user/sign-in");
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
-    }
+    };
 
+    const googleAuthHandler = () => {
+        window.location.href = 'http://localhost:8000/auth/google';
+      };
 
     return (
         <section className="bg-base-80">
@@ -93,18 +99,21 @@ const SignUp = () => {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             Create an account
                         </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={handleCreateUserSubmit}>
+                        <form
+                            className="space-y-4 md:space-y-6"
+                            onSubmit={handleCreateUserSubmit}
+                        >
                             <div>
                                 <label
                                     htmlFor="email"
                                     className="block mb-2 text-sm font-medium text-gray-900"
                                 >
-                                    Username
+                                    Full Name
                                 </label>
                                 <input
-                                    type="username"
-                                    name="username"
-                                    id="username"
+                                    type="name"
+                                    name="name"
+                                    id="name"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                     placeholder=""
                                     required
@@ -153,10 +162,11 @@ const SignUp = () => {
                                     Confirm password
                                 </label>
                                 <input
-                                    type="confirm-password"
+                                    type="password"
                                     name="confirm-password"
                                     id="confirm-password"
                                     placeholder="••••••••"
+                                    autoComplete="confirm-password"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                     required
                                     onChange={handleChange}
@@ -203,6 +213,31 @@ const SignUp = () => {
                                 </a>
                             </p>
                         </form>
+
+                        <div className="text-center">
+                            <button
+                                type="button"
+                                onClick={googleAuthHandler}
+                                className="text-white bg-blue-500 hover:bg-blue-400 focus:ring-4 focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2"
+                            >
+                                <svg
+                                    className="mr-2 -ml-1 w-4 h-4"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    data-prefix="fab"
+                                    data-icon="google"
+                                    role="img"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 488 512"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+                                    ></path>
+                                </svg>
+                                Sign up with Google
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

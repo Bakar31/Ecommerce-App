@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,6 @@ interface User {
     password: string;
 }
 
-
 const SignIn = () => {
     const router = useRouter();
     const [formData, setFormData] = useState<User>({
@@ -19,23 +18,25 @@ const SignIn = () => {
         password: "",
     });
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)  => {
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
         });
-    }
+    };
 
     const handleLogInSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8000/api/user/login', {
-                method: 'POST',
-                credentials: 'include', 
+            const response = await fetch("http://localhost:8000/api/user/login", {
+                method: "POST",
+                credentials: "include",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(formData),
             });
@@ -47,13 +48,11 @@ const SignIn = () => {
                 email: "",
                 password: "",
             });
-            router.push('/products')
-
+            router.push("/products");
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
-    }
-
+    };
 
     return (
         <section className="bg-base-80">
@@ -73,7 +72,10 @@ const SignIn = () => {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             Sign in to your account
                         </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={handleLogInSubmit}>
+                        <form
+                            className="space-y-4 md:space-y-6"
+                            onSubmit={handleLogInSubmit}
+                        >
                             <div>
                                 <label
                                     htmlFor="email"
@@ -107,6 +109,14 @@ const SignIn = () => {
                                     required
                                     onChange={handleChange}
                                 />
+                            </div>
+                            <div>
+                                <a
+                                    href="#"
+                                    className="text-sm font-medium text-primary-600 hover:underline"
+                                >
+                                    Forgot password?
+                                </a>
                             </div>
                             <button
                                 type="submit"
