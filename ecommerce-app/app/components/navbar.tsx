@@ -3,19 +3,23 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
+import { useEffect } from 'react';
+import { getCookie, setCookie, getCookies, removeCookie } from 'typescript-cookie'
 
 const Navbar = () => {
-
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
+      console.log(getCookies())
       const response = await fetch('http://localhost:8000/api/user/logout', {
         method: 'POST',
         credentials: 'include',
       });
 
       if (response.ok) {
+        document.cookie = 'userToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
         router.push('/user/sign-in');
       } else {
         console.error('Logout failed');
