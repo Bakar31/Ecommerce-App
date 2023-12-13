@@ -85,8 +85,6 @@ export const resetPassword =async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log(email)
-  console.log(password)
 
   try {
     const user = await prisma.user.findUnique({
@@ -108,7 +106,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const token = jwt.sign({ userId: user.id }, "bakar31", {
       expiresIn: "1h",
     });
-    console.log(token)
+    // console.log(token)
 
     res.cookie("userToken", token, {
       httpOnly: true,
@@ -133,5 +131,15 @@ export const logoutUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error logging out:", error);
     res.status(500).json({ error: "Error logging out" });
+  }
+};
+
+export const checkAuthStatus = async (req: Request, res: Response) => {
+  const userToken = req.cookies['userToken'];
+
+  if (userToken) {
+    res.status(200).json({ userToken });
+  } else {
+    res.status(404).json({ message: 'Cookie not found' });
   }
 };

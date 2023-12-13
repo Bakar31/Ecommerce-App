@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 passport.use(
     new GoogleStrategy(
         {
-            // options for google strategy
             clientID:
                 "231595875353-cvciijblts2rqpu3hr3sn6040f7nhgda.apps.googleusercontent.com",
             clientSecret: "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",
@@ -21,7 +20,8 @@ passport.use(
             done: (arg0: null, arg1: any) => any
         ) => {
             try {
-                const userEmail = profile.emails[0].value;
+                const userEmail = profile._json.email;
+                console.log(userEmail)
                 const userName = profile.displayName || 'Default Name';
                 const userGoogleId = profile.id;
 
@@ -39,35 +39,8 @@ passport.use(
                         },
                     });
 
-                    const userLogin = {
-                        email: userEmail,
-                        password: userGoogleId, 
-                    };
-
-                    const response = await fetch("http://localhost:8000/api/user/login", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(userLogin),
-                    });
-
                 } else {
                     console.log('Email already exists. Logging in instead.')
-                    const userLogin = {
-                        email: userEmail,
-                        password: userGoogleId, 
-                    };
-
-                    const response = await fetch("http://localhost:8000/api/user/login", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(userLogin),
-                    });
                 }
 
                 return done(null, user);
@@ -88,7 +61,7 @@ passport.serializeUser(
 // Deserialize the user
 passport.deserializeUser(
     async (
-        email: string,
+        id: number,
         done: (
             arg0: null,
             arg1:
@@ -105,7 +78,7 @@ passport.deserializeUser(
         ) => void
     ) => {
         try {
-            const user = await prisma.user.findUnique({ where: { email } });
+            const user = await prisma.user.findUnique({ where: { id } });
             done(null, user);
         } catch (error: any) {
             done(error, undefined);

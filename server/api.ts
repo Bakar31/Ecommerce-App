@@ -1,12 +1,23 @@
 import express from "express";
+import { Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import passport from 'passport';
+import jwt from "jsonwebtoken";
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 import router from "./routes/productRoutes";
 import userRouter from "./routes/userRoutes";
 const passportSetup = require('./config/passport.setup');
+
+interface User {
+  id: number;
+  email: string;
+  name: string;
+  password: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const app = express();
 const PORT = 8000;
@@ -38,11 +49,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Sign up
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'],  prompt: 'select_account' }));
 app.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login-failure' }),
-  (req, res) => {
+  (req: Request, res: Response) => {
+    const user: User = req.user as User;
+
+    if (!req.user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const token = jwt.sign({ userId: user.id }, "bakar31", {
+      expiresIn: "1h",
+    });
+
+    res.cookie("userToken", token, {
+      httpOnly: true,
+    });
     res.redirect('http://localhost:3000/');
   }
 );

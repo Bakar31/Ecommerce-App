@@ -3,12 +3,35 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie';
-import { useEffect } from 'react';
-import { getCookie, setCookie, getCookies, removeCookie } from 'typescript-cookie'
+import { useEffect, useState } from 'react';
+import { setCookie, getCookies, removeCookie } from 'typescript-cookie'
 
 const Navbar = () => {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkLoggedInStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/user/checkAuthStatus', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setIsLoggedIn(data.userToken);
+        } else {
+          console.error('Failed to fetch authentication status');
+        }
+      } catch (error) {
+        console.error('Error checking authentication status:', error);
+      }
+    };
+
+    checkLoggedInStatus();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -20,6 +43,7 @@ const Navbar = () => {
 
       if (response.ok) {
         document.cookie = 'userToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
+        setIsLoggedIn(false);
         router.push('/user/sign-in');
       } else {
         console.error('Logout failed');
@@ -58,11 +82,27 @@ const Navbar = () => {
             tabIndex={0}
             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
           >
-            <li>
-              {/* <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a> */}
+            {isLoggedIn ? (
+              <>
+                <Link
+                  className="justify-between"
+                  href="/products"
+                  prefetch={false}
+                >
+                  Products
+                </Link>
+                <Link
+                  className="justify-between"
+                  href="/add-products"
+                  prefetch={false}
+                >
+                  New Product
+                </Link>
+                <li>
+                  <a onClick={handleLogout}>Logout</a>
+                </li>
+              </>
+            ) : (
               <Link
                 className="justify-between"
                 href="/user/sign-in"
@@ -70,27 +110,7 @@ const Navbar = () => {
               >
                 Sign-in
               </Link>
-              <Link
-                className="justify-between"
-                href="/products"
-                prefetch={false}
-              >
-                Products
-              </Link>
-              <Link
-                className="justify-between"
-                href="/add-products"
-                prefetch={false}
-              >
-                New Product
-              </Link>
-            </li>
-            <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a onClick={handleLogout}>Logout</a>
-            </li>
+            )}
           </ul>
         </div>
       </div>

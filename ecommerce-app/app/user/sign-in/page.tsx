@@ -47,7 +47,7 @@ const SignIn = () => {
                 email: "",
                 password: "",
             });
-            router.push("/products");
+            window.location.href = "/products";
         } catch (error) {
             console.error("Error:", error);
         }
