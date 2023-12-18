@@ -23,4 +23,10 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedUt DateTime @updatedAt
+  role      UserRole @default(USER)
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
