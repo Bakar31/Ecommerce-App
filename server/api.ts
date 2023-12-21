@@ -6,6 +6,7 @@ import passport from 'passport';
 import jwt from "jsonwebtoken";
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 import router from "./routes/productRoutes";
 import userRouter from "./routes/userRoutes";
 const passportSetup = require('./config/passport.setup');
@@ -17,6 +18,7 @@ interface User {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  role: string;
 }
 
 const app = express();
@@ -32,6 +34,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
+
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
   origin: ["http://localhost:3000"],

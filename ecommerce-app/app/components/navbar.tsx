@@ -20,7 +20,6 @@ const Navbar = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data)
           setIsLoggedIn(data.userToken);
         } else {
           console.error('Failed to fetch authentication status');
