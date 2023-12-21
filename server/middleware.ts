@@ -6,9 +6,7 @@ const prisma = new PrismaClient();
 const JWT_SECRET = 'bakar31';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req)
     const userToken = req.cookies['userToken'];
-    console.log(userToken)
 
     if (userToken) {
         try {
@@ -20,7 +18,12 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
             if (user) {
                 req.user = user;
-                next();
+                // Check if user role is 'ADMIN'
+                if (user.role === 'ADMIN') {
+                    next(); // Allow access to subsequent APIs
+                } else {
+                    res.status(403).json({ message: 'Unauthorized - Insufficient role' });
+                }
             } else {
                 res.status(404).json({ message: 'User not found' });
             }

@@ -64,6 +64,7 @@ const AddProducts = () => {
       const response = await fetch("http://localhost:8000/api/products", {
         method: "POST",
         body: formDataToSend,
+        credentials: 'include',
       });
 
       if (response.ok) {

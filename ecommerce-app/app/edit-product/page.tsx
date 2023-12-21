@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
@@ -146,7 +147,6 @@ const EditProduct = ({
       formDataToSend.append("product_id", searchParams.product_id);
 
       const formDataArray = Array.from(formDataToSend.entries());
-      // console.log(formDataArray);
 
       const userToken = getCookies()
       console.log("Cookie: ", userToken)
@@ -155,11 +155,8 @@ const EditProduct = ({
         `http://localhost:8000/api/products/${searchParams.product_id}/image`,
         {
           method: "PUT",
-          headers: {
-            'Authorization': `${userToken}`,
-            'Content-Type': 'application/json',
-          },
           body: formDataToSend,
+          credentials: 'include',
         }
       );
 
