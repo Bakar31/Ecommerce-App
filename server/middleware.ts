@@ -7,6 +7,7 @@ const JWT_SECRET = 'bakar31';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     const userToken = req.cookies['userToken'];
+    console.log(userToken)
 
     if (userToken) {
         try {
@@ -17,8 +18,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
             });
 
             if (user) {
-                req.user = user;
-                // Check if user role is 'ADMIN'
+                console.log(user.role)
                 if (user.role === 'ADMIN') {
                     next(); // Allow access to subsequent APIs
                 } else {

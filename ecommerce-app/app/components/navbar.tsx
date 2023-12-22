@@ -1,40 +1,39 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
-import { setCookie, getCookies, removeCookie } from 'typescript-cookie'
 
 const Navbar = () => {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkLoggedInStatus = async () => {
+    const checkUserRole = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/user/checkAuthStatus', {
+        const response = await fetch('http://localhost:8000/api/user/checkAuthRole', {
           method: 'GET',
           credentials: 'include',
         });
 
         if (response.ok) {
           const data = await response.json();
-          setIsLoggedIn(data.userToken);
+          console.log(data)
+          setUserRole(data.role);
         } else {
-          console.error('Failed to fetch authentication status');
+          console.error('Failed to fetch user role');
         }
       } catch (error) {
-        console.error('Error checking authentication status:', error);
+        console.error('Error checking user role:', error);
       }
     };
 
-    checkLoggedInStatus();
+    checkUserRole();
   }, []);
 
   const handleLogout = async () => {
     try {
-      console.log(getCookies())
       const response = await fetch('http://localhost:8000/api/user/logout', {
         method: 'POST',
         credentials: 'include',
@@ -42,7 +41,7 @@ const Navbar = () => {
 
       if (response.ok) {
         document.cookie = 'userToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
-        setIsLoggedIn(false);
+        setUserRole(null);
         router.push('/user/sign-in');
       } else {
         console.error('Logout failed');
@@ -81,7 +80,7 @@ const Navbar = () => {
             tabIndex={0}
             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
           >
-            {isLoggedIn ? (
+            {(userRole === 'USER' || userRole === 'ADMIN') ? (
               <>
                 <Link
                   className="justify-between"
@@ -90,25 +89,33 @@ const Navbar = () => {
                 >
                   Products
                 </Link>
-                <Link
-                  className="justify-between"
-                  href="/add-products"
-                  prefetch={false}
-                >
-                  New Product
-                </Link>
+                {userRole === 'ADMIN' && (
+                  <Link
+                    className="justify-between"
+                    href="/add-products"
+                    prefetch={false}
+                  >
+                    New Product
+                  </Link>
+                )}
                 <li>
                   <a onClick={handleLogout}>Logout</a>
                 </li>
               </>
             ) : (
-              <Link
+              <><Link
+                className="justify-between"
+                href="/products"
+                prefetch={false}
+              >
+                Products
+              </Link><Link
                 className="justify-between"
                 href="/user/sign-in"
                 prefetch={false}
               >
-                Sign-in
-              </Link>
+                  Sign-in
+                </Link></>
             )}
           </ul>
         </div>
@@ -118,3 +125,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+

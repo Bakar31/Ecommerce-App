@@ -7,6 +7,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const prisma = new PrismaClient();
+const JWT_SECRET = 'bakar31';
 
 // Schema for input
 const userSchema = z.object({
@@ -133,11 +134,27 @@ export const logoutUser = async (req: Request, res: Response) => {
   }
 };
 
-export const checkAuthStatus = async (req: Request, res: Response) => {
+export const checkAuthRole = async (req: Request, res: Response) => {
   const userToken = req.cookies['userToken'];
 
   if (userToken) {
-    res.status(200).json({ userToken });
+    try {
+      const decodedToken = jwt.verify(userToken, JWT_SECRET);
+      const userId = (decodedToken as { userId: number }).userId;
+      const user = await prisma.user.findUnique({
+          where: { id: userId },
+      });
+
+      if (user) {
+        res.status(200).json({ role: user.role });
+      } else {
+          res.status(404).json({ message: 'User not found' });
+      }
+  } catch (error) {
+      console.error('Error decoding token:', error);
+      res.status(401).json({ message: 'Invalid token' });
+  }
+
   } else {
     res.status(404).json({ message: 'Cookie not found' });
   }

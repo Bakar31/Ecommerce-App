@@ -24,6 +24,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
   params: { product_id },
 }) => {
   const [product, setProduct] = useState<Product | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const router = useRouter();
 
@@ -54,6 +55,28 @@ const ProductPage: React.FC<ProductPageProps> = ({
     fetchProduct();
   }, [product_id]);
 
+  useEffect(() => {
+    const checkUserRole = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/user/checkAuthRole', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserRole(data.role);
+        } else {
+          console.error('Failed to fetch user role');
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      }
+    };
+
+    checkUserRole();
+  }, []);
+
   const handleDelete = async () => {
     if (buttonDisabled) {
       return;
@@ -63,7 +86,10 @@ const ProductPage: React.FC<ProductPageProps> = ({
     try {
       const response = await fetch(
         `http://localhost:8000/api/products/${product_id}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          credentials: 'include',
+        }
       );
 
       if (response.ok) {
@@ -106,27 +132,34 @@ const ProductPage: React.FC<ProductPageProps> = ({
         </div>
       )}
       <div className="flex gap-3">
-        <button
-          onClick={handleDelete}
-          className={`bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400 ${
-            buttonDisabled ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={buttonDisabled}
-        >
-          {buttonDisabled ? "Deleting..." : "Delete"}
-        </button>
+        {userRole === 'ADMIN' ? (
+          <>
+            <button
+              onClick={handleDelete}
+              className={`bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400 ${buttonDisabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              disabled={buttonDisabled}
+            >
+              {buttonDisabled ? "Deleting..." : "Delete"}
+            </button>
 
-        <Link
-          href={{
-            pathname: "/edit-product",
-            query: {
-              product_id: product_id,
-            },
-          }}
-          className="bg-blue-500 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400"
-        >
-          Edit
-        </Link>
+            <Link
+              href={{
+                pathname: "/edit-product",
+                query: {
+                  product_id: product_id,
+                },
+              }}
+              className="bg-blue-500 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-red-400"
+            >
+              Edit
+            </Link>
+          </>
+        ) : userRole === 'USER' || userRole === null ? (
+          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-green-400">
+            Buy Now
+          </button>
+        ) : null}
       </div>
     </div>
   );

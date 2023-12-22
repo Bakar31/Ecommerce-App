@@ -18,7 +18,7 @@ router.get("/:id", getProductById);
 
 router.post("/", verifyToken, createProduct);
 router.put("/:id", verifyToken, updateProduct);
-router.delete("/:id", deleteProduct);
-router.put("/:id/image", updateProductImage);
+router.delete("/:id", verifyToken, deleteProduct);
+router.put("/:id/image", verifyToken, updateProductImage);
 
 export default router;

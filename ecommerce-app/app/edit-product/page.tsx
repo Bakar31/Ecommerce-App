@@ -3,8 +3,6 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { setCookie, getCookies, removeCookie } from 'typescript-cookie'
-import Image from "next/image";
 
 interface Product {
   name: string;
@@ -87,6 +85,7 @@ const EditProduct = ({
         `http://localhost:8000/api/products/${searchParams.product_id}`,
         {
           method: "PUT",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },
@@ -147,9 +146,6 @@ const EditProduct = ({
       formDataToSend.append("product_id", searchParams.product_id);
 
       const formDataArray = Array.from(formDataToSend.entries());
-
-      const userToken = getCookies()
-      console.log("Cookie: ", userToken)
 
       const response = await fetch(
         `http://localhost:8000/api/products/${searchParams.product_id}/image`,
