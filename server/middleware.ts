@@ -7,7 +7,6 @@ const JWT_SECRET = 'bakar31';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     const userToken = req.cookies['userToken'];
-    console.log(userToken)
 
     if (userToken) {
         try {
