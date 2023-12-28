@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import AddToCartButton from "./addToCartButton";
 
 interface Product {
   product_id: number;
@@ -16,7 +17,7 @@ interface Product {
 
 interface ProductPageProps {
   params: {
-    product_id: string;
+    product_id: number;
   };
 }
 
@@ -156,9 +157,10 @@ const ProductPage: React.FC<ProductPageProps> = ({
             </Link>
           </>
         ) : userRole === 'USER' || userRole === null ? (
-          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-green-400">
-            Buy Now
-          </button>
+          // <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-green-400">
+          //   Buy Now
+          // </button>
+          <AddToCartButton productId={product_id} />
         ) : null}
       </div>
     </div>

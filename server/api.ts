@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 import router from "./routes/productRoutes";
 import userRouter from "./routes/userRoutes";
+import cartRouter from "./routes/cartRoutes";
 const passportSetup = require('./config/passport.setup');
 
 interface User {
@@ -49,6 +50,7 @@ app.use(cors(corsOptions));
 
 app.use("/api/products", router);
 app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -65,7 +67,7 @@ app.get(
       return res.status(404).json({ error: "User not found" });
     }
 
-    const token = jwt.sign({ userId: user.id }, "bakar31", {
+    const token = jwt.sign({ userId: user.id, role: user.role }, "bakar31", {
       expiresIn: "1h",
     });
 
