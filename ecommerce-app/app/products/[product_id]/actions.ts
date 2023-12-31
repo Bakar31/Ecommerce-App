@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 export async function incrementProductQuantity(productId: number) {
     try {
         let cartData;
@@ -11,7 +13,6 @@ export async function incrementProductQuantity(productId: number) {
             try {
                 const createResponse = await fetch("http://localhost:8000/api/cart/create", {
                     method: "POST",
-                    credentials: 'include',
                 });
 
                 if (!createResponse.ok) {
@@ -29,7 +30,33 @@ export async function incrementProductQuantity(productId: number) {
 
         const articleInCart = cartData.items.find((item: { productId: number; }) => item.productId === productId);
 
+        if (articleInCart){
+            const incrementResponse = await fetch("http://localhost:8000/api/cart/incrementCount", {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        });
+
+        if (!incrementResponse.ok) {
+            throw new Error("Failed to increment cart count.");
+        }
+        }else {
+            const cartitemresponse = await fetch("http://localhost:8000/api/cart/createCartItem", {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cartData, productId })
+        });
+        }
+
     } catch (error) {
         console.error("Error:", error);
     }
+
+    // revalidatePath("/products/[product_id]");
 }

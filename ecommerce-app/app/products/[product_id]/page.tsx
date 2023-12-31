@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import AddToCartButton from "./addToCartButton";
+import { incrementProductQuantity } from "./actions";
 
 interface Product {
   product_id: number;
@@ -59,19 +60,22 @@ const ProductPage: React.FC<ProductPageProps> = ({
   useEffect(() => {
     const checkUserRole = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/user/checkAuthRole', {
-          method: 'GET',
-          credentials: 'include',
-        });
+        const response = await fetch(
+          "http://localhost:8000/api/user/checkAuthRole",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           setUserRole(data.role);
         } else {
-          console.error('Failed to fetch user role');
+          console.error("Failed to fetch user role");
         }
       } catch (error) {
-        console.error('Error checking user role:', error);
+        console.error("Error checking user role:", error);
       }
     };
 
@@ -89,7 +93,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
         `http://localhost:8000/api/products/${product_id}`,
         {
           method: "DELETE",
-          credentials: 'include',
+          credentials: "include",
         }
       );
 
@@ -133,7 +137,7 @@ const ProductPage: React.FC<ProductPageProps> = ({
         </div>
       )}
       <div className="flex gap-3">
-        {userRole === 'ADMIN' ? (
+        {userRole === "ADMIN" ? (
           <>
             <button
               onClick={handleDelete}
@@ -156,11 +160,14 @@ const ProductPage: React.FC<ProductPageProps> = ({
               Edit
             </Link>
           </>
-        ) : userRole === 'USER' || userRole === null ? (
+        ) : userRole === "USER" || userRole === null ? (
           // <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-green-400">
           //   Buy Now
           // </button>
-          <AddToCartButton productId={product_id} />
+          <AddToCartButton
+            productId={product_id}
+            incrementProductQuantity={incrementProductQuantity}
+          />
         ) : null}
       </div>
     </div>
