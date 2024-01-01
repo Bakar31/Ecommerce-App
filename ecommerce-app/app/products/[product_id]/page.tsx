@@ -161,9 +161,6 @@ const ProductPage: React.FC<ProductPageProps> = ({
             </Link>
           </>
         ) : userRole === "USER" || userRole === null ? (
-          // <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-green-400">
-          //   Buy Now
-          // </button>
           <AddToCartButton
             productId={product_id}
             incrementProductQuantity={incrementProductQuantity}

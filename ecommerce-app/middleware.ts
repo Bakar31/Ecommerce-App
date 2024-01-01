@@ -41,7 +41,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/',
     '/user/sign-in',
     '/user/sign-up',
     '/add-products',

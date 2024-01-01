@@ -68,7 +68,7 @@ app.get(
     }
 
     const token = jwt.sign({ userId: user.id, role: user.role }, "bakar31", {
-      expiresIn: "1h",
+      expiresIn: "10h",
     });
 
     res.cookie("userToken", token, {

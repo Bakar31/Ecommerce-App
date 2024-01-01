@@ -41,17 +41,35 @@ const SignIn = () => {
             });
 
             const data = await response.json();
-            console.log(data);
 
             setFormData({
                 email: "",
                 password: "",
             });
+
+            const userId = data.userId
+            try {
+                const mergeResponse = await fetch("http://localhost:8000/api/cart/mergeAnonymousCartIntoUserCart", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId }),
+                });
+
+                const mergeData = await mergeResponse.json();
+                window.location.href = "/products";
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
             window.location.href = "/products";
         } catch (error) {
             console.error("Error:", error);
         }
     };
+
 
     const googleAuthHandler = () => {
         window.location.href = 'http://localhost:8000/auth/google';

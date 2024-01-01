@@ -25,6 +25,7 @@ model User {
   createdAt DateTime @default(now())
   updatedUt DateTime @updatedAt
   role      UserRole @default(USER)
+  Cart      Cart[]
 }
 
 enum UserRole {
@@ -34,7 +35,9 @@ enum UserRole {
 
 model Cart {
   id        Int        @id @default(autoincrement())
-  items  CartItem[]
+  items     CartItem[]
+  userId    Int?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedUt DateTime   @updatedAt
 

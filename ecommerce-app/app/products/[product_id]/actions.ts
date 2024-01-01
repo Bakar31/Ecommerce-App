@@ -13,6 +13,7 @@ export async function incrementProductQuantity(productId: number) {
             try {
                 const createResponse = await fetch("http://localhost:8000/api/cart/create", {
                     method: "POST",
+                    credentials: 'include',
                 });
 
                 if (!createResponse.ok) {
@@ -28,7 +29,7 @@ export async function incrementProductQuantity(productId: number) {
             cartData = await response.json();
         }
 
-        const articleInCart = cartData.items.find((item: { productId: number; }) => item.productId === productId);
+        const articleInCart = cartData.items.find((item: { productId: number; }) => item.productId == productId);
 
         if (articleInCart){
             const incrementResponse = await fetch("http://localhost:8000/api/cart/incrementCount", {
@@ -37,7 +38,7 @@ export async function incrementProductQuantity(productId: number) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ productId })
+            body: JSON.stringify({ articleInCart })
         });
 
         if (!incrementResponse.ok) {

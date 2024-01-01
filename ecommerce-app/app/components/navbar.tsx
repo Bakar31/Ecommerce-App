@@ -89,6 +89,13 @@ const Navbar = () => {
                 >
                   Products
                 </Link>
+                <Link
+                  className="justify-between"
+                  href="/cart"
+                  prefetch={false}
+                >
+                  Cart
+                </Link>
                 {userRole === 'ADMIN' && (
                   <Link
                     className="justify-between"
@@ -109,11 +116,18 @@ const Navbar = () => {
                 prefetch={false}
               >
                 Products
-              </Link><Link
-                className="justify-between"
-                href="/user/sign-in"
-                prefetch={false}
-              >
+              </Link>
+                <Link
+                  className="justify-between"
+                  href="/cart"
+                  prefetch={false}
+                >
+                  Cart
+                </Link><Link
+                  className="justify-between"
+                  href="/user/sign-in"
+                  prefetch={false}
+                >
                   Sign-in
                 </Link></>
             )}

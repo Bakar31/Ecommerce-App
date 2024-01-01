@@ -4,6 +4,7 @@ import { compare, hash } from "bcrypt";
 import * as z from "zod";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { mergeAnonymousCartIntoUserCart } from "./cartController";
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -103,9 +104,10 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: "Invalid password" });
     }
-
+    
+    const userId = user.id
     const token = jwt.sign({ userId: user.id, role: user.role }, "bakar31", {
-      expiresIn: "1h",
+      expiresIn: "10h",
     });
 
     res.cookie("userToken", token, {
@@ -114,8 +116,10 @@ export const loginUser = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Login successful",
-      token,
+      userId,
     });
+
+    
   } catch (error) {
     console.error("Error logging in:", error);
     return res.status(500).json({ error: "Error logging in" });
