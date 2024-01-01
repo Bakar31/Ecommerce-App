@@ -267,3 +267,77 @@ function mergeCartItems(...cartItems: CartItem[][]): CartItem[] {
         return acc;
     }, [] as CartItem[]);
 }
+
+
+export async function checkout(req: Request, res: Response) {
+    try {
+        const { userId, cartItems } = req.body;
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const newOrder = await prisma.order.create({
+            data: {
+                user: { connect: { id: userId } },
+                totalAmount: calculateTotal(cartItems),
+            },
+        });
+
+        for (const cartItem of cartItems) {
+            await prisma.orderItem.create({
+                data: {
+                    order: { connect: { id: newOrder.id } },
+                    product: { connect: { product_id: cartItem.productId } },
+                    quantity: cartItem.quantity,
+                },
+            });
+        }
+
+        res.status(201).json({ message: 'Order placed successfully' });
+    } catch (error) {
+        console.error('Error during checkout:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+function calculateTotal(cartItems: any) {
+    let total = 0;
+    for (const cartItem of cartItems) {
+        total += parseInt(cartItem.quantity) * cartItem.product.price;
+    }
+    return total;
+}
+
+export async function getOrders(req: Request, res: Response) {
+    try {
+        const userToken = req.cookies['userToken'] || '';
+        const decodedToken = jwt.verify(userToken, JWT_SECRET);
+        const userId = (decodedToken as { userId: number }).userId;
+
+        const orders = await prisma.order.findMany({
+            where: {
+                userId: userId,
+            },
+            include: {
+                orderItems: {
+                    include: {
+                        product: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

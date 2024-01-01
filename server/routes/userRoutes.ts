@@ -1,5 +1,4 @@
 import express from "express";
-import passport from 'passport';
 import { createUser, loginUser, logoutUser, resetPassword, checkAuthRole } from "../controllers/userController";
 const passportSetup = require('../config/passport.setup');
 

@@ -47,6 +47,7 @@ const SignIn = () => {
                 password: "",
             });
 
+            window.location.href = "/products";
             const userId = data.userId
             try {
                 const mergeResponse = await fetch("http://localhost:8000/api/cart/mergeAnonymousCartIntoUserCart", {
@@ -64,7 +65,6 @@ const SignIn = () => {
             } catch (error) {
                 console.error("Error:", error);
             }
-            window.location.href = "/products";
         } catch (error) {
             console.error("Error:", error);
         }

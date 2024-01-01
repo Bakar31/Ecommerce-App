@@ -8,13 +8,14 @@ datasource db {
 }
 
 model products {
-  product_id    Int        @id @default(autoincrement())
-  name          String     @db.VarChar(100)
+  product_id    Int         @id @default(autoincrement())
+  name          String      @db.VarChar(100)
   description   String?
-  price         Decimal    @db.Decimal(10, 2)
+  price         Decimal     @db.Decimal(10, 2)
   stockquantity Int
-  image_path    String?    @db.VarChar(255)
+  image_path    String?     @db.VarChar(255)
   CartItem      CartItem[]
+  OrderItem     OrderItem[]
 }
 
 model User {
@@ -26,6 +27,7 @@ model User {
   updatedUt DateTime @updatedAt
   role      UserRole @default(USER)
   Cart      Cart[]
+  Order     Order[]
 }
 
 enum UserRole {
@@ -53,4 +55,27 @@ model CartItem {
   cart      Cart     @relation(fields: [cartId], references: [id])
 
   @@map("cartitems")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  totalAmount Decimal
+  orderItems  OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   products @relation(fields: [productId], references: [product_id])
+  productId Int
+  quantity  Int
+
+  @@map("order_items")
 }

@@ -17,10 +17,54 @@ interface CartData {
 
 export default function CartPage() {
     const [cart, setCart] = useState<CartData | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
 
-    const handleCheckout = () => {
-        router.push(`/products/`);
+    useEffect(() => {
+        const getUserId = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/user/checkAuthRole', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserId(data.userId);
+                } else {
+                    console.error('Failed to fetch user role');
+                }
+            } catch (error) {
+                console.error('Error checking user role:', error);
+            }
+        };
+
+        getUserId();
+    }, []);
+
+    const handleCheckout = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/cart/checkout", {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    cartItems: cart?.items
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to process checkout");
+            }
+            setCart(null);
+
+            // router.push(`/orders`);
+        } catch (error) {
+            console.error("Error during checkout:", error);
+        }
     };
 
     useEffect(() => {
@@ -61,7 +105,7 @@ export default function CartPage() {
                     Total: {cart ? parseFloat(cart.subtotal.toFixed(2)) || 0 : 'Loading...'}
                 </p>
                 <button className="btn-primary btn sm:w-[200px]"
-                onClick={handleCheckout}>Checkout</button>
+                    onClick={handleCheckout}>Checkout</button>
             </div>
         </div>
     );

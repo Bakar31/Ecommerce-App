@@ -96,6 +96,15 @@ const Navbar = () => {
                 >
                   Cart
                 </Link>
+                {userRole === 'USER' && (
+                  <Link
+                  className="justify-between"
+                  href="/orders"
+                  prefetch={false}
+                >
+                  Orders
+                </Link>
+                )}
                 {userRole === 'ADMIN' && (
                   <Link
                     className="justify-between"

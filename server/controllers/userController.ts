@@ -4,7 +4,6 @@ import { compare, hash } from "bcrypt";
 import * as z from "zod";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import { mergeAnonymousCartIntoUserCart } from "./cartController";
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -150,7 +149,7 @@ export const checkAuthRole = async (req: Request, res: Response) => {
       });
 
       if (user) {
-        res.status(200).json({ role: user.role });
+        res.status(200).json({ userId: user.id, role: user.role });
       } else {
           res.status(404).json({ message: 'User not found' });
       }
