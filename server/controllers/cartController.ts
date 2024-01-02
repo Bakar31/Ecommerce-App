@@ -103,7 +103,6 @@ export async function getCart(req: Request, res: Response) {
             size: cartSize,
             subtotal: cartSubtotal,
         };
-        console.log(updatedCart)
 
         return res.status(200).json(updatedCart);
     } catch (error) {
@@ -313,6 +312,24 @@ function calculateTotal(cartItems: any) {
     return total;
 }
 
+export async function deleteCart(req: Request, res: Response) {
+    const { cartId } = req.body;
+
+    try {
+        await prisma.cartItem.deleteMany({
+            where: { cartId: cartId },
+        });
+
+
+        await prisma.cart.delete({
+            where: { id: cartId },
+        });
+        return res.status(200).send("Cart deleted successfully");
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+}
+
 export async function getOrders(req: Request, res: Response) {
     try {
         const userToken = req.cookies['userToken'] || '';
@@ -338,6 +355,29 @@ export async function getOrders(req: Request, res: Response) {
         res.status(200).json(orders);
     } catch (error) {
         console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
+export async function allOrders(req: Request, res: Response) {
+    try {
+        const allOrders = await prisma.order.findMany({
+            include: {
+                orderItems: {
+                    include: {
+                        product: true,
+                    },
+                },
+                user: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        res.status(200).json(allOrders);
+    } catch (error) {
+        console.error('Error fetching all orders:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }

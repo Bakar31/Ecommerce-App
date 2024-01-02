@@ -89,30 +89,36 @@ const Navbar = () => {
                 >
                   Products
                 </Link>
-                <Link
-                  className="justify-between"
-                  href="/cart"
-                  prefetch={false}
-                >
-                  Cart
-                </Link>
+
                 {userRole === 'USER' && (
-                  <Link
-                  className="justify-between"
-                  href="/orders"
-                  prefetch={false}
-                >
-                  Orders
-                </Link>
+                  <><Link
+                    className="justify-between"
+                    href="/cart"
+                    prefetch={false}
+                  >
+                    Cart
+                  </Link><Link
+                    className="justify-between"
+                    href="/orders"
+                    prefetch={false}
+                  >
+                      Orders
+                    </Link></>
                 )}
                 {userRole === 'ADMIN' && (
-                  <Link
+                  <><Link
                     className="justify-between"
                     href="/add-products"
                     prefetch={false}
                   >
                     New Product
-                  </Link>
+                  </Link><Link
+                    className="justify-between"
+                    href="/customer-orders"
+                    prefetch={false}
+                  >
+                      Customer Orders
+                    </Link></>
                 )}
                 <li>
                   <a onClick={handleLogout}>Logout</a>

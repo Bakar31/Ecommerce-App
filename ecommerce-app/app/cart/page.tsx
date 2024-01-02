@@ -10,6 +10,7 @@ interface CartItem {
 }
 
 interface CartData {
+    id: number;
     items: CartItem[];
     size: number
     subtotal: number;
@@ -44,26 +45,53 @@ export default function CartPage() {
 
     const handleCheckout = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/cart/checkout", {
-                method: "POST",
+            if (!cart) {
+                console.error('Cart is null');
+                return;
+            }
+
+            const response = await fetch('http://localhost:8000/api/cart/checkout', {
+                method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     userId: userId,
-                    cartItems: cart?.items
+                    cartItems: cart.items,
                 }),
             });
 
+            console.log(cart);
+
             if (!response.ok) {
-                throw new Error("Failed to process checkout");
+                throw new Error('Failed to process checkout');
             }
+
+            try {
+                const deleteResponse = await fetch('http://localhost:8000/api/cart/deleteCart', {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cartId: cart.id,
+                    }),
+                });
+
+                if (!deleteResponse.ok) {
+                    throw new Error('Failed to delete cart');
+                }
+            } catch (error) {
+                console.error('Error deleting cart:', error);
+            }
+
             setCart(null);
 
-            // router.push(`/orders`);
+            router.push(`/orders`);
         } catch (error) {
-            console.error("Error during checkout:", error);
+            console.error('Error during checkout:', error);
         }
     };
 
