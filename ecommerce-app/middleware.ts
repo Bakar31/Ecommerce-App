@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
       if (userRole === 'ADMIN') {
 
       } else {
-        if (path === '/add-products' || path === '/edit-product') {
+        if (path === '/add-products' || path === '/edit-product' || '/customer-orders') {
           return NextResponse.redirect(new URL('/', request.nextUrl));
         }
       }
@@ -45,5 +45,6 @@ export const config = {
     '/user/sign-up',
     '/add-products',
     '/edit-product',
+    '/customer-orders',
   ],
 };

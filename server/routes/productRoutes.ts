@@ -2,6 +2,7 @@ import express from "express";
 import {
   getAllProducts,
   createProduct,
+  searchProduct,
 } from "../controllers/allProductsController";
 import {
   getProductById,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.get("/", getAllProducts);
 router.get("/:id", getProductById);
+router.get("/search", searchProduct);
 
 router.post("/", verifyToken, createProduct);
 router.put("/:id", verifyToken, updateProduct);

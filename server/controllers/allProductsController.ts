@@ -91,3 +91,27 @@ export const createProduct = async (req: Request, res: Response) => {
     }
   });
 };
+
+export const searchProduct = async (req: Request, res: Response) => {
+  const { query } = req.query;
+  console.log(query)
+
+  try {
+    if (typeof query !== 'string') {
+      throw new Error('Query should be a string');
+    }
+
+    const products = await prisma.products.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+    });
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}

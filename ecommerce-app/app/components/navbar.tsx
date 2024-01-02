@@ -2,12 +2,21 @@
 
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
 
 const Navbar = () => {
   const router = useRouter();
   const [userRole, setUserRole] = useState<string | null>(null);
+
+  async function searchProducts(formData: FormData) {
+
+    const searchQuery = formData.get("searchQuery")?.toString();
+
+    if (searchQuery) {
+      redirect("/search?query=" + searchQuery);
+    }
+  }
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -63,13 +72,15 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="flex items-center justify-end bg-base-80">
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-auto"
-          />
-        </div>
+        <form action={searchProducts}>
+          <div className="form-control">
+            <input
+              name="searchQuery"
+              placeholder="Search"
+              className="input-bordered input w-full min-w-[100px]"
+            />
+          </div>
+        </form>
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
