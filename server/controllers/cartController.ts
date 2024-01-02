@@ -330,6 +330,7 @@ export async function deleteCart(req: Request, res: Response) {
     }
 }
 
+// Orders
 export async function getOrders(req: Request, res: Response) {
     try {
         const userToken = req.cookies['userToken'] || '';
@@ -379,5 +380,22 @@ export async function allOrders(req: Request, res: Response) {
     } catch (error) {
         console.error('Error fetching all orders:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+export async function updateOrderStatus(req: Request, res: Response) {
+    const { orderId, newState } = req.body;
+
+    try {
+        const updatedOrder = await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                state: newState,
+            },
+        });
+
+        return res.status(200).json(updatedOrder);
+    } catch (error) {
+        return res.status(500).send(error);
     }
 }

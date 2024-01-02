@@ -11,7 +11,8 @@ import {
     mergeAnonymousCartIntoUserCart,
     checkout,
     getOrders,
-    allOrders
+    allOrders,
+    updateOrderStatus,
 } from "../controllers/cartController";
 
 const cartRouter = express.Router();
@@ -20,6 +21,7 @@ cartRouter.get("/get", getCart);
 cartRouter.get("/getorders/:id", getOrders);
 cartRouter.get("/allorders", allOrders);
 cartRouter.post("/create", createCart);
+cartRouter.put("/updateOrderStatus", updateOrderStatus);
 cartRouter.delete("/deleteCart", deleteCart);
 cartRouter.delete("/deleteItem", deleteCartItem);
 cartRouter.post("/incrementCount", incrementCartCount);

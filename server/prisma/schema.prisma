@@ -57,6 +57,11 @@ model CartItem {
   @@map("cartitems")
 }
 
+enum OrderState {
+  Pending
+  Delivered
+}
+
 model Order {
   id          Int         @id @default(autoincrement())
   user        User        @relation(fields: [userId], references: [id])
@@ -65,6 +70,7 @@ model Order {
   updatedAt   DateTime    @updatedAt
   totalAmount Decimal
   orderItems  OrderItem[]
+  state       OrderState  @default(Pending)
 
   @@map("orders")
 }
