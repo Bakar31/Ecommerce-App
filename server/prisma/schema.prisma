@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model products {
+  product_id    Int         @id @default(autoincrement())
+  name          String      @db.VarChar(100)
+  description   String?
+  price         Decimal     @db.Decimal(10, 2)
+  stockquantity Int
+  image_path    String?     @db.VarChar(255)
+  CartItem      CartItem[]
+  OrderItem     OrderItem[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedUt DateTime @updatedAt
+  role      UserRole @default(USER)
+  Cart      Cart[]
+  Order     Order[]
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  items     CartItem[]
+  userId    Int?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedUt DateTime   @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   products @relation(fields: [productId], references: [product_id], onDelete: Cascade)
+  quantity  Int
+  cartId    Int
+  cart      Cart     @relation(fields: [cartId], references: [id])
+
+  @@map("cartitems")
+}
+
+enum OrderState {
+  Pending
+  Delivered
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  totalAmount Decimal
+  orderItems  OrderItem[]
+  state       OrderState  @default(Pending)
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   products @relation(fields: [productId], references: [product_id])
+  productId Int
+  quantity  Int
+
+  @@map("order_items")
+}
