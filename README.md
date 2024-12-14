@@ -44,3 +44,10 @@ This repository contains the source code for an e-commerce web application creat
 ### Other Tools
 
 - **Cookies:** Used for managing user sessions and authentication securely.
+
+## Demo
+
+
+https://github.com/user-attachments/assets/084deb13-5fea-4c48-8106-c27449fbbf92
+
+
